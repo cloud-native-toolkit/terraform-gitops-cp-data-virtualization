@@ -3,7 +3,7 @@ DEST_DIR="$2"
 
 SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 MODULE_DIR=$(cd "${SCRIPT_DIR}/.."; pwd -P)
-CHART_DIR=$(cd "${MODULE_DIR}/charts/${NAME}"; pwd -P)
+CHART_DIR=$(cd "${MODULE_DIR}/chart/${NAME}"; pwd -P)
 
 mkdir -p $DEST_DIR
 
