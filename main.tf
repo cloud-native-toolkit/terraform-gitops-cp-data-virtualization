@@ -18,8 +18,8 @@ locals {
     NUMBER_OF_WORKERS =  "1"
   }
 
-  layer = "application"
-  type  = "base"
+  layer = "services"
+  type  = "instances"
   application_branch = "main"
   namespace = var.namespace
   layer_config = var.gitops_config[local.layer]
