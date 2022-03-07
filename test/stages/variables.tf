@@ -1,13 +1,12 @@
 
-# Resource Group Variables
-variable "resource_group_name" {
+variable cluster_username { 
   type        = string
-  description = "Existing resource group where the IKS cluster will be provisioned."
+  description = "The username for OCP cluster access"
 }
 
-variable "ibmcloud_api_key" {
+variable "cluster_password" {
   type        = string
-  description = "The api key for IBM Cloud access"
+  description = "The password for OCP cluster access"
 }
 
 variable "server_url" {
@@ -87,4 +86,79 @@ variable "kubeseal_namespace" {
 }
 
 variable "cp_entitlement_key" {
+  type        = string
+  description = "The entitlement key required to access Cloud Pak images"
+  default = ""
+}
+
+variable "cpd_common_services_namespace" {
+  type        = string
+  description = "Namespace for cpd commmon services"
+  default = "ibm-common-services"
+}
+
+variable "cpd_operator_namespace" {
+  type        = string
+  description = "Namespace for cpd commmon services"
+  default = "cpd-operators"
+}
+
+variable "cpd_namespace" {
+  type        = string
+  description = "Namespace for cpd services"
+  default = "gitops-cp4d-instance"
+}
+
+variable "memory_request_size" {
+  type        = string
+  description = "Memory size"
+  default     = "16Gi"
+}
+
+variable "cpu_request_size" {
+  type        = string
+  description = "CPU size"
+  default     = "4"
+}
+
+variable "persistence_storage_class" {
+  type        = string
+  description = "Persistence Strage Class"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "persistence_storage_size" {
+  type        = string
+  description = "Persistence Strage Size"
+  default     = "50Gi"
+}
+
+variable "caching_storage_class" {
+  type        = string
+  description = "Caching Strage Class"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "caching_storage_size" {
+  type        = string
+  description = "Caching Strage Size"
+  default     = "50Gi"
+}
+
+variable "worker_storage_class" {
+  type        = string
+  description = "Worker Strage Class"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "worker_storage_size" {
+  type        = string
+  description = "Worker Strage Size"
+  default     = "50Gi"
+}
+
+variable "number_of_workers" {
+  type        = string
+  description = "Number of Workers"
+  default     = "1"
 }

@@ -79,3 +79,75 @@ variable "server_name" {
   description = "The name of the server"
   default     = "default"
 }
+
+variable "cluster_ingress_hostname" {
+  type        = string
+  description = "Ingress hostname of the IKS cluster."
+  default     = ""
+}
+
+variable "operator_namespace" {
+  type        = string
+  description = "operator namespace"
+  default     = "cpd-operators"
+}
+
+variable "cpd_namespace" {
+  type        = string
+  description = "cpd namespace"
+  default     = "gitops-cp4d-instance"
+}
+
+variable "memory_request_size" {
+  type        = string
+  description = "Memory size"
+  default     = "16Gi"
+}
+
+variable "cpu_request_size" {
+  type        = string
+  description = "CPU size"
+  default     = "4"
+}
+
+variable "persistence_storage_class" {
+  type        = string
+  description = "Persistence Strage Class"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "persistence_storage_size" {
+  type        = string
+  description = "Persistence Strage Size"
+  default     = "50Gi"
+}
+
+variable "caching_storage_class" {
+  type        = string
+  description = "Caching Strage Class"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "caching_storage_size" {
+  type        = string
+  description = "Caching Strage Size"
+  default     = "50Gi"
+}
+
+variable "worker_storage_class" {
+  type        = string
+  description = "Worker Strage Class"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "worker_storage_size" {
+  type        = string
+  description = "Worker Strage Size"
+  default     = "50Gi"
+}
+
+variable "number_of_workers" {
+  type        = string
+  description = "Number of Workers"
+  default     = "1"
+}

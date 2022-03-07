@@ -1,11 +1,11 @@
 name: gitops-terraform-gitops-data-virtualization
 type: gitops
 description: >-
-  Module to populate a gitops repo with the resources to provision
-  terraform-gitops-data-virtualization
+  Module to populate a gitops repo with the resources to provision Data Virtualization instance on Cloud Pak for Data
 tags:
   - tools
   - gitops
+  - dv
 versions:
   - platforms:
       - kubernetes
@@ -41,3 +41,4 @@ versions:
         moduleRef:
           id: gitops
           output: sealed_secrets_cert
+softwareProvider: ibm-cp

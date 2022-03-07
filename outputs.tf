@@ -17,6 +17,18 @@ output "namespace" {
   depends_on  = [null_resource.setup_gitops]
 }
 
+output "operator_namespace" {
+  description = "The name of the operators namespace"
+  value       = var.operator_namespace
+  depends_on  = [null_resource.setup_instance_gitops]
+}
+
+output "cpd_namespace" {
+  description = "The name of the Cloud Pak for Data namespace"
+  value       = var.cpd_namespace
+  depends_on  = [null_resource.setup_instance_gitops]
+}
+
 output "server_name" {
   description = "The server where the module will be deployed"
   value       = var.server_name

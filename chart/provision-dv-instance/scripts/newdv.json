@@ -1,0 +1,30 @@
+{
+  "addon_type": "dv",
+  "display_name": "data-virtualization",
+  "namespace": "zen",
+  "addon_version": "1.7.0",
+  "create_arguments": {
+    "parameters": {
+      "enableHostIPC": "false",
+      "resources.dv.requests.memory": "8Gi",
+      "image.pullPolicy": "IfNotPresent",
+      "persistence.cachingpv.storageClass": "nfs-client",
+      "persistence.cachingpv.size": "100Gi",
+      "persistence.size": "100Gi",
+      "persistence.workerpv.storageClass": "nfs-client",
+      "persistence.workerpv.size": "100Gi",
+      "persistence.storageClass": "nfs-client",
+      "resources.dv.requests.cpu": "4",
+      "workerCount": "1"
+    },
+    "resources": {
+      "cpu": "4",
+      "memory": "8"
+    },
+    "description": "Data Virtualization",
+    "metadata": {
+      "sample": "data"
+    }
+  },
+  "transient_fields": {}
+}
