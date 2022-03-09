@@ -19,7 +19,7 @@ locals {
   }
 
   layer = "services"
-  type  = "operators"
+  type  = "base"
   application_branch = "main"
   namespace = var.namespace
   cpd_namespace = var.cpd_namespace
