@@ -17,6 +17,12 @@ output "namespace" {
   depends_on  = [null_resource.setup_gitops]
 }
 
+output "cpd_namespace" {
+  description = "Namespace for cpd services"
+  value       = local.cpd_namespace
+  depends_on  = [null_resource.setup_gitops]
+}
+
 output "server_name" {
   description = "The server where the module will be deployed"
   value       = var.server_name

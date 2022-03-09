@@ -22,6 +22,7 @@ locals {
   type  = "base"
   application_branch = "main"
   namespace = var.namespace
+  cpd_namespace = var.cpd_namespace
   layer_config = var.gitops_config[local.layer]
 }
 
