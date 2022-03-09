@@ -1,4 +1,4 @@
-name: gitops-terraform-gitops-data-virtualization
+name: gitops-cp-data-virtualization
 type: gitops
 description: >-
   Module to populate a gitops repo with the resources to provision Data Virtualization instance on Cloud Pak for Data

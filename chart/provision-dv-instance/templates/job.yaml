@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: dv-instance-create-job
+  namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
   label:
     app: test
 spec:
@@ -16,8 +17,8 @@ spec:
       volumes:
       - configMap:
           defaultMode: 0777
-          name: dv-cm
-        name: dv-cm
+          name: dv-provision-cm
+        name: dv-provision-cm
       - name: temp
         emptyDir: {}
       restartPolicy: Never
@@ -27,7 +28,7 @@ spec:
         image: quay.io/ibmgaragecloud/cli-tools
         volumeMounts:
           - mountPath: /scripts
-            name: dv-cm
+            name: dv-provision-cm
           - name: temp
             mountPath: /temp
         command:

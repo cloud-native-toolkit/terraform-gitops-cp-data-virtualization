@@ -34,10 +34,19 @@ rules:
   verbs: ["get", "watch", "list"]
 - apiGroups: ["rbac.authorization.k8s.io"] # "" indicates the core API group
   resources: ["roles"]
-  verbs: ["get", "watch", "list"]
+  verbs: ["get", "watch", "list", "create", "patch"]
 - apiGroups: ["rbac.authorization.k8s.io"] # "" indicates the core API group
   resources: ["rolebindings"]
-  verbs: ["get", "watch", "list"]
+  verbs: ["get", "watch", "list", "create", "patch"]
+- apiGroups: ["db2u.databases.ibm.com"] # "" indicates the core API group
+  resources: ["dvs"]
+  verbs: ["get", "watch", "list", "create", "patch", "delete", "update"]
+- apiGroups: ["db2u.databases.ibm.com"] # "" indicates the core API group
+  resources: ["bigsqls"]
+  verbs: ["get", "watch", "list", "create", "patch", "delete", "update"]
+- apiGroups: ["db2u.databases.ibm.com"] # "" indicates the core API group
+  resources: ["db2uclusters"]
+  verbs: ["get", "watch", "list", "create", "patch", "delete", "update"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1

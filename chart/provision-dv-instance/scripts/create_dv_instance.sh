@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bas sh
 
 ################################################################################
 #
@@ -17,7 +17,7 @@
 VALUE_INT_YES=0
 VALUE_INT_NO=1
 
-CPD_RELEASE_CURRENT="4.0.4"
+CPD_RELEASE_CURRENT="4.0.6"
 CPD_RELEASE="${CPD_RELEASE_CURRENT}"
 DV_RELEASE="${CPD_RELEASE}"
 DV_CUSTOM_RELEASE=""
@@ -54,8 +54,8 @@ DV_INSTALL_JSON_FILE_PATH="newdv.json"
 MNTDIR="/scripts"
 CMDDIR="/temp"
 
-Usage (){
-cat << EOF
+Usage() {
+   cat <<EOF
 DETAILED OPTIONS HELP
 
  #General Install Options
@@ -92,112 +92,110 @@ EOF
 }
 
 #Any logic that requires modification of parms based on conditions here
-init_parameters()
-{
+init_parameters() {
 
-  if [ "$DV_CUSTOM_RELEASE" != "" ]; then
-    DV_RELEASE=${DV_CUSTOM_RELEASE}
-  else
-    if [ "${CPD_RELEASE}" = "4.0.4" ] ; then
-       DV_RELEASE="4.0.3"
-     else
-       DV_RELEASE=${CPD_RELEASE}
-     fi
-  fi
+   if [ "$DV_CUSTOM_RELEASE" != "" ]; then
+      DV_RELEASE=${DV_CUSTOM_RELEASE}
+   else
+      if [ "${CPD_RELEASE}" = "4.0.4" ]; then
+         DV_RELEASE="4.0.3"
+      else
+         DV_RELEASE=${CPD_RELEASE}
+      fi
+   fi
 
-  IS_DV=${VALUE_INT_YES}
+   IS_DV=${VALUE_INT_YES}
 
 }
 
 #prints the parameter values that the install will use
-print_install_parameters(){
+print_install_parameters() {
 
-log_info "General parameters: "
-log_info "Zen Namespace: ${SERVICE_INSTANCE_NAMESPACE}"
-log_info "Zen Operators Namespace: ${ZEN_OPERATORS_NAMESPACE}"
-log_info "CP4D Custom User: ${CP4D_WEB_URL_USERNAME}"
-log_info "CP4D iamIntegration is set to ${IAMINTEGRATION}"
-echo
+   log_info "General parameters: "
+   log_info "Zen Namespace: ${SERVICE_INSTANCE_NAMESPACE}"
+   log_info "Zen Operators Namespace: ${ZEN_OPERATORS_NAMESPACE}"
+   log_info "CP4D Custom User: ${CP4D_WEB_URL_USERNAME}"
+   log_info "CP4D iamIntegration is set to ${IAMINTEGRATION}"
+   echo
 
-echo
-log_info "Version/Tag parameters : "
-oc get ibmcpd ibmcpd-cr -n ${SERVICE_INSTANCE_NAMESPACE} -o yaml | grep ' zenOperatorBuildNumber: '
+   echo
+   log_info "Version/Tag parameters : "
+   oc get ibmcpd ibmcpd-cr -n ${SERVICE_INSTANCE_NAMESPACE} -o yaml | grep ' zenOperatorBuildNumber: '
 
-log_info "CPD Release Version  : ${CPD_RELEASE}"
-log_info "DV Release Version  : ${DV_RELEASE}"
+   log_info "CPD Release Version  : ${CPD_RELEASE}"
+   log_info "DV Release Version  : ${DV_RELEASE}"
 
-echo
-#print dv specific parameters
+   echo
+   #print dv specific parameters
 
-log_info "Number of worker pods: ${NUMBER_OF_WORKERS}"
-log_info "Requested memory size: ${MEMORY_REQUEST_SIZE}"
-log_info "Requested CPU size: ${CPU_REQUEST_SIZE}"
-log_info "Persistence Storage Class: ${PERSISTENCE_STORAGE_CLASS}"
-log_info "Persistence Storage Size: ${PERSISTENCE_STORAGE_SIZE}"
-log_info "Caching Storage Class: ${CACHING_STORAGE_CLASS}"
-log_info "Caching Storage Size: ${CACHING_STORAGE_SIZE}"
-log_info "Worker Storage Class: ${WORKER_STORAGE_CLASS}"
-log_info "Worker Storage Size: ${WORKER_STORAGE_SIZE}"
+   log_info "Number of worker pods: ${NUMBER_OF_WORKERS}"
+   log_info "Requested memory size: ${MEMORY_REQUEST_SIZE}"
+   log_info "Requested CPU size: ${CPU_REQUEST_SIZE}"
+   log_info "Persistence Storage Class: ${PERSISTENCE_STORAGE_CLASS}"
+   log_info "Persistence Storage Size: ${PERSISTENCE_STORAGE_SIZE}"
+   log_info "Caching Storage Class: ${CACHING_STORAGE_CLASS}"
+   log_info "Caching Storage Size: ${CACHING_STORAGE_SIZE}"
+   log_info "Worker Storage Class: ${WORKER_STORAGE_CLASS}"
+   log_info "Worker Storage Size: ${WORKER_STORAGE_SIZE}"
 
-echo
+   echo
 } #end of print_install_parameters
 
 #Helper Functions
-exists()
-{
-  if command -v $1 &> /dev/null ; then
-    return
-  fi
+exists() {
+   if command -v $1 &>/dev/null; then
+      return
+   fi
 
-  if [ -f $1 ]; then
-    return
-  fi
-  false
+   if [ -f $1 ]; then
+      return
+   fi
+   false
 }
 
-get_dv_version(){
-  cpd_release=${DV_RELEASE}
-  if [[ "$cpd_release" == "4.0.0" ]]; then
-    echo '1.7.0'
-  elif [[ "$cpd_release" == "4.0.1" ]]; then
-    echo '1.7.1'
-  elif [[ "$cpd_release" == "4.0.2" ]]; then
-    echo '1.7.2'
-  elif [[ "$cpd_release" == "4.0.3" ]]; then
-    echo '1.7.3'
-  elif [[ "$cpd_release" == "4.0.4" ]]; then
-    echo '1.7.3'
-  elif [[ "$cpd_release" == "4.0.5" ]]; then
-    echo '1.7.5'
-  else
-    echo '1.7.3'
-  fi
+get_dv_version() {
+   cpd_release=${DV_RELEASE}
+   if [[ "$cpd_release" == "4.0.0" ]]; then
+      echo '1.7.0'
+   elif [[ "$cpd_release" == "4.0.1" ]]; then
+      echo '1.7.1'
+   elif [[ "$cpd_release" == "4.0.2" ]]; then
+      echo '1.7.2'
+   elif [[ "$cpd_release" == "4.0.3" ]]; then
+      echo '1.7.3'
+   elif [[ "$cpd_release" == "4.0.4" ]]; then
+      echo '1.7.3'
+   elif [[ "$cpd_release" == "4.0.5" ]]; then
+      echo '1.7.5'
+   else
+      echo '1.7.3'
+   fi
 }
 
-get_dv_service_version(){
-   local dv_service_version=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service-cr -o jsonpath="{.spec.version}")
+get_dv_service_version() {
+   local dv_service_version=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service -o jsonpath="{.spec.version}")
    echo $dv_service_version
 }
 
 #create the dv provisioner role
-ibm_dv_provisioner_role(){
+ibm_dv_provisioner_role() {
 
    log_info "Create DV provisioner role"
-   oc apply -f /scripts/ibm_dv_provisioner_role.yaml 2>&1
+   oc create -f /scripts/ibm_dv_provisioner_role.yaml 2>&1
 
 } #end of ibm_dv_provisioner_role
 
 #create the ibm dv provisioner rolebinding
-ibm_dv_provisioner_rolebinding(){
+ibm_dv_provisioner_rolebinding() {
 
-    log_info "Create DV provisioner role binding"
-    oc apply -f /scripts/ibm_dv_provisioner_rolebinding.yaml 2>&1
+   log_info "Create DV provisioner role binding"
+   oc create -f /scripts/ibm_dv_provisioner_rolebinding.yaml 2>&1
 
 } #end of ibm_dv_provisioner_rolebinding
 
 #create the jwt token:https://cloud.ibm.com/apidocs/cloud-pak-data
 #to decode the jwt token use https://www.base64decode.org/
-create_jwt_token(){
+create_jwt_token() {
 
    COOKIE_FILE="${SERVICE_INSTANCE_NAMESPACE}.bigsql.cookie"
    COOKIE_FILE_PATH="${CMDDIR}/${COOKIE_FILE}"
@@ -210,116 +208,136 @@ create_jwt_token(){
 
    isIAMEnabled=$(oc get ibmcpd ibmcpd-cr -n ${SERVICE_INSTANCE_NAMESPACE} -o jsonpath={.spec.iamIntegration})
 
-   if [[ $isIAMEnabled == "true" ]]
-    then
+   if [[ $isIAMEnabled == "true" ]]; then
       platform_auth_namespace="ibm-common-services"
       cp4dPassword=$(oc -n $platform_auth_namespace get secret platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 --decode)
       log_info ""
       log_info "IAM is enabled, using admin password: $cp4dPassword"
       log_info ""
-	  #Get I am Access token
-	  route1=`oc get route --no-headers --namespace $platform_auth_namespace | grep cp-console |  awk '{print $2}'`
-	  PRETOKEN1=`curl -sSk --request POST --url https://${route1}/idprovider/v1/auth/identitytoken -d "grant_type=password&username=admin&password=${cp4dPassword}&scope=openid"`
-	  pretoken=`echo $PRETOKEN1 | tr "," "\n" | grep access_token | cut -c18- | rev | cut -c2- | rev`
-	  #Use above token to genearte zen token
-	  TOKEN=`curl -sSk --request GET --url https://${CP4D_WEB_URL}/v1/preauth/validateAuth --header "username: admin" --header "iam-token: $pretoken"`
-	  token=`echo $TOKEN | tr "," "\n" | grep accessToken  | tail -n1 | cut -c16- | rev | cut -c2- | rev`
-  else
-     log_info "IAM is disabled, using admin password: password"
-     payload="{\"username\":\"${CP4D_WEB_URL_USERNAME}\",\"password\":\"${CP4D_WEB_URL_PASSWORD}\"}"
-     log_info "The JWT token paylod is ${payload}"
+      #Get I am Access token
+      route1=$(oc get route --no-headers --namespace $platform_auth_namespace | grep cp-console | awk '{print $2}')
+      PRETOKEN1=$(curl -sSk --request POST --url https://${route1}/idprovider/v1/auth/identitytoken -d "grant_type=password&username=admin&password=${cp4dPassword}&scope=openid")
+      pretoken=$(echo $PRETOKEN1 | tr "," "\n" | grep access_token | cut -c18- | rev | cut -c2- | rev)
+      #Use above token to genearte zen token
+      TOKEN=$(curl -sSk --request GET --url https://${CP4D_WEB_URL}/v1/preauth/validateAuth --header "username: admin" --header "iam-token: $pretoken")
+      token=$(echo $TOKEN | tr "," "\n" | grep accessToken | tail -n1 | cut -c16- | rev | cut -c2- | rev)
+   else
+      log_info "IAM is disabled, using admin password: password"
+      payload="{\"username\":\"${CP4D_WEB_URL_USERNAME}\",\"password\":\"${CP4D_WEB_URL_PASSWORD}\"}"
+      log_info "The JWT token paylod is ${payload}"
 
-     log_info "Generating the JWT token"
-     #this generates a token;
-     curl -v -c ${COOKIE_FILE_PATH} "https://${CP4D_WEB_URL}/v1/preauth/signin?context=${SERVICE_INSTANCE_NAMESPACE}" -H "Origin: https://${CP4D_WEB_URL}" -H "Accept-Encoding: gzip, deflate, br" -H "Accept-Language: en-US,en;q=0.9" -H "User-Agent: Mozilla/5.0" -H "Content-Type: application/json;charset=UTF-8" -H "Accept: application/json, text/plain, */*" -H "Referer: https://${CP4D_WEB_URL}/${SERVICE_INSTANCE_NAMESPACE}/" -H "Cookie: __preloginurl__=/${SERVICE_INSTANCE_NAMESPACE}/" -H "Connection: keep-alive" -d "${payload}" --compressed --insecure
+      log_info "Generating the JWT token"
+      #this generates a token;
+      curl -v -c ${COOKIE_FILE_PATH} "https://${CP4D_WEB_URL}/v1/preauth/signin?context=${SERVICE_INSTANCE_NAMESPACE}" -H "Origin: https://${CP4D_WEB_URL}" -H "Accept-Encoding: gzip, deflate, br" -H "Accept-Language: en-US,en;q=0.9" -H "User-Agent: Mozilla/5.0" -H "Content-Type: application/json;charset=UTF-8" -H "Accept: application/json, text/plain, */*" -H "Referer: https://${CP4D_WEB_URL}/${SERVICE_INSTANCE_NAMESPACE}/" -H "Cookie: __preloginurl__=/${SERVICE_INSTANCE_NAMESPACE}/" -H "Connection: keep-alive" -d "${payload}" --compressed --insecure
 
-     log_info "Wait for 10 sec to get the JWT token"
-     sleep 10s
+      log_info "Wait for 10 sec to get the JWT token"
+      sleep 10s
 
-     #store the token
-     token=`awk '{for (I=1;I<=NF;I++) if ($I == "ibm-private-cloud-session") {print $(I+1)};}' ${COOKIE_FILE_PATH}`
+      #store the token
+      token=$(awk '{for (I=1;I<=NF;I++) if ($I == "ibm-private-cloud-session") {print $(I+1)};}' ${COOKIE_FILE_PATH})
 
-  fi
+   fi
 
 } #end of create_jwt_token
 
 #check dv head pod status
 #Check using new bigsql CRD
-check_dv_head_pod_status(){
+check_dv_head_pod_status() {
 
    log_info "Waiting for DV head pod to start running"
 
    #Wait until the head pod is in 1/1 state & running
-   opNotReady=1; iter=0; maxIter=60
+   opNotReady=1
+   iter=0
+   maxIter=60
    while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
-      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $2}' | awk -F'/'  ' BEGIN {count = 0}  $1 == $2 {count++ } END {print count}') -eq 1 ] &&  break
+      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $2}' | awk -F'/' ' BEGIN {count = 0}  $1 == $2 {count++ } END {print count}') -eq 1 ] && break
       oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine
-      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE | grep c-dv | grep Error | wc -l) -gt 0 ] &&  { log_fatal "At least 1 DV  Pod is in error state, failing the provisioning now." ; exit 1; }
+      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE | grep c-dv | grep Error | wc -l) -gt 0 ] && {
+         log_fatal "At least 1 DV  Pod is in error state, failing the provisioning now."
+         exit 1
+      }
       log_info "Waiting for DV Head Pod to become ready.. ($iter / $maxIter)"
-      let iter=iter+1; sleep 20;
+      let iter=iter+1
+      sleep 20
    done
 
-   [ $iter -eq $maxIter ] && { log_warning "Maximum iteration has been reached and DV Head Pod still not running and 1/1, exit" ; exit 1; }
+   [ $iter -eq $maxIter ] && {
+      log_warning "Maximum iteration has been reached and DV Head Pod still not running and 1/1, exit"
+      exit 1
+   }
 
-    log_info "DV head pod ready & running"
+   log_info "DV head pod ready & running"
 
 }
 
 #check dv worker pod status
 #Check using new bigsql CRD
-check_dv_worker_pod_status(){
+check_dv_worker_pod_status() {
 
    log_info "Waiting for DV worker pod to start running"
 
    #Wait until the worker pod is in 1/1 state & running
-   opNotReady=1; iter=0; maxIter=60
+   opNotReady=1
+   iter=0
+   maxIter=60
    while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
-      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name\!=dashmpp-head-0,role=db,type=engine | awk '{print $2}' | awk -F'/'  ' BEGIN {count = 0}  $1 == $2 {count++ } END {print count}') -eq ${NUMBER_OF_WORKERS} ] &&  break
+      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name\!=dashmpp-head-0,role=db,type=engine | awk '{print $2}' | awk -F'/' ' BEGIN {count = 0}  $1 == $2 {count++ } END {print count}') -eq ${NUMBER_OF_WORKERS} ] && break
       oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name!=dashmpp-head-0,role=db,type=engine
-      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE | grep c-dv | grep Error | wc -l) -gt 0 ] &&  { log_fatal "At least 1 DV pod is in error state, failing the provisioning now." ; exit 1; }
+      [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE | grep c-dv | grep Error | wc -l) -gt 0 ] && {
+         log_fatal "At least 1 DV pod is in error state, failing the provisioning now."
+         exit 1
+      }
       log_info "Waiting for required DV Worker Pods(${NUMBER_OF_WORKERS}) to become ready.. ($iter / $maxIter)"
-      let iter=iter+1; sleep 20;
+      let iter=iter+1
+      sleep 20
    done
 
-   [ $iter -eq $maxIter ] && { log_warning "Maximum iteration has been reached and DV Workers Pods still not running and 1/1, exit" ; exit 1; }
+   [ $iter -eq $maxIter ] && {
+      log_warning "Maximum iteration has been reached and DV Workers Pods still not running and 1/1, exit"
+      exit 1
+   }
 
    log_info "DV worker pod(s) ready & running"
 
 }
 
 #check dv is ready to use
-check_dv_ready_state(){
+check_dv_ready_state() {
 
-      log_info "DV Readiness Check"
+   log_info "DV Readiness Check"
 
-      dvenginePod=$(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
-      log_info "DV engine head pod is $dvenginePod"
+   dvenginePod=$(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
+   log_info "DV engine head pod is $dvenginePod"
 
-       #Wait until the DV service is  ready
-      dvNotReady=1; iter=0; maxIter=120 #DV takes longer than BigSQL to become ready
-      while [ $dvNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
-         oc logs -n $SERVICE_INSTANCE_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" > /dev/null
-         dvNotReady=$?
-         if [ $dvNotReady -eq 0 ]; then
-            break
-         else
-            log_info "Waiting for the DV service to be ready. Recheck in 30 seconds"
-            let iter=iter+1; sleep 30
-         fi
-      done
-
-      if [ $dvNotReady -eq 1 ]; then
-         log_info "The container logs are:"
-         oc logs -n $SERVICE_INSTANCE_NAMESPACE $bigsqlenginePod | tail -300
-         log_error "DV service is still not ready after waiting for $maxIter intervals of 30 seconds"
-         exit 1
+   #Wait until the DV service is  ready
+   dvNotReady=1
+   iter=0
+   maxIter=120 #DV takes longer than BigSQL to become ready
+   while [ $dvNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+      oc logs -n $SERVICE_INSTANCE_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" >/dev/null
+      dvNotReady=$?
+      if [ $dvNotReady -eq 0 ]; then
+         break
       else
-         echo "[INFO] DV service is ready... [current check is phrase -> db2uctl markers get SETUP_COMPLETE]"
+         log_info "Waiting for the DV service to be ready. Recheck in 30 seconds"
+         let iter=iter+1
+         sleep 30
       fi
+   done
+
+   if [ $dvNotReady -eq 1 ]; then
+      log_info "The container logs are:"
+      oc logs -n $SERVICE_INSTANCE_NAMESPACE $bigsqlenginePod | tail -300
+      log_error "DV service is still not ready after waiting for $maxIter intervals of 30 seconds"
+      exit 1
+   else
+      echo "[INFO] DV service is ready... [current check is phrase -> db2uctl markers get SETUP_COMPLETE]"
+   fi
 }
 
 #We do not use this by default because DV validation script waits and checks if DV pods are running
-check_dv_provision(){
+check_dv_provision() {
 
    log_info "Check DV provisioning, this operation may take some time.. "
    #wait for head pod to run
@@ -343,26 +361,25 @@ check_dv_provision(){
 
 } #End of get_installed_versions
 
-get_timestamp(){
-  local pretty_print="${1:-$VALUE_INT_YES}"
-  if [ $pretty_print -eq $VALUE_INT_YES ]; then
-     #Default to pretty print for logging
-     echo "["$(date -u +"%H:%M:%S,%3N %Z")"]"
-  else
-     #"2021040319h45m09s" style to be used in file names
-     echo $(date "+%Y%m%d%Hh%Mm%Ss")
-  fi
+get_timestamp() {
+   local pretty_print="${1:-$VALUE_INT_YES}"
+   if [ $pretty_print -eq $VALUE_INT_YES ]; then
+      #Default to pretty print for logging
+      echo "["$(date -u +"%H:%M:%S,%3N %Z")"]"
+   else
+      #"2021040319h45m09s" style to be used in file names
+      echo $(date "+%Y%m%d%Hh%Mm%Ss")
+   fi
 }
 
-trim_spaces()
-{
-    local ENTRIES="$@"
-    result=$(echo "$ENTRIES" | sed -e 's/^ *//' -e 's/ *$//')
-    echo $result
+trim_spaces() {
+   local ENTRIES="$@"
+   result=$(echo "$ENTRIES" | sed -e 's/^ *//' -e 's/ *$//')
+   echo $result
 }
 
 #Provision DV via Zen core REST API
-provision_dv(){
+provision_dv() {
    local dv_instance_version=$(get_dv_version) #default to 1.7.1, once we switch to CP4D River 4.0.2, default will move up to 1.7.2
    local dv_service_version=$(get_dv_service_version)
 
@@ -403,9 +420,9 @@ provision_dv(){
    sleep 10s
 
    if [ "${token}" == "" ]; then
-       log_fatal "JWT token is not generated "
-       log_fatal ""
-       exit 1
+      log_fatal "JWT token is not generated "
+      log_fatal ""
+      exit 1
    fi
 
    NUMBER_OF_WORKERS=$(trim_spaces "${NUMBER_OF_WORKERS}")
@@ -471,11 +488,10 @@ provision_dv(){
    cat "${CMDDIR}/${current_json}"
 
    #v3 api
-   if [[ $isIAMEnabled == "true" ]]
-    then
-     curl -v -k -H "Authorization: Bearer $token"  -H "Content-Type: application/json" -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}" -H "jwt-auth-user-payload: {\"accessToken\": \"$token\"}"
-    else
-      curl -v -k -H "Content-Type: application/json" -b ${COOKIE_FILE_PATH}  -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}"
+   if [[ $isIAMEnabled == "true" ]]; then
+      curl -v -k -H "Authorization: Bearer $token" -H "Content-Type: application/json" -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}" -H "jwt-auth-user-payload: {\"accessToken\": \"$token\"}"
+   else
+      curl -v -k -H "Content-Type: application/json" -b ${COOKIE_FILE_PATH} -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}"
    fi
 
    #This impacts newer OC 4.6.xxx, 4.7 and 4.8 clusters
@@ -483,61 +499,70 @@ provision_dv(){
    #https://ibm-analytics.slack.com/archives/C019EJ0QH4Y/p1626098470003300?thread_ts=1625244478.403600&cid=C019EJ0QH4Y
    #https://github.ibm.com/DB2/tracker/issues/12051#issuecomment-33324336
    log_info "Waiting for DV statefulset c-db2u-dv-db2u to be created in order to disable tty check"
-   opNotReady=1; iter=0; maxIter=60
+   opNotReady=1
+   iter=0
+   maxIter=60
    while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
-     oc get sts c-db2u-dv-db2u
-     if [[ $? -eq 0 ]] ; then
-       log_info "Patch DV statefulset c-db2u-dv-db2u with tty workaround"
-       oc --namespace ${SERVICE_INSTANCE_NAMESPACE} patch sts c-db2u-dv-db2u -p='{"spec":{"template":{"spec":{"containers":[{"name":"db2u","tty":false}]}}}}}'
-       break
-     else
-       log_info "Waiting for statefulset c-db2u-dv-db2u to be created by db2u operator.. ($iter / $maxIter)"
-       let iter=iter+1; sleep 30;
-     fi
+      oc get sts c-db2u-dv-db2u
+      if [[ $? -eq 0 ]]; then
+         log_info "Patch DV statefulset c-db2u-dv-db2u with tty workaround"
+         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} patch sts c-db2u-dv-db2u -p='{"spec":{"template":{"spec":{"containers":[{"name":"db2u","tty":false}]}}}}}'
+         break
+      else
+         log_info "Waiting for statefulset c-db2u-dv-db2u to be created by db2u operator.. ($iter / $maxIter)"
+         let iter=iter+1
+         sleep 30
+      fi
    done
 
    if [ "$PERSISTENCE_STORAGE_CLASS" == *"ocs"* ]; then
       log_info "PERSISTENCE_STORAGE_CLASS $PERSISTENCE_STORAGE_CLASS is OCS"
       log_info "Need to check if workers are looping for /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
-      opNotReady=1; iter=0; maxIter=240
+      opNotReady=1
+      iter=0
+      maxIter=240
       while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
-      oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster' 2>&1 > /dev/null
-      if [[ $? -eq 0 ]] ; then
-         log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
-         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c 'touch /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster'"
-         break
-      else
-         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep '/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists' 2>&1 > /dev/null
-         if [[ $? -eq 0 ]] ; then
-            log_info "/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists"
+         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster' 2>&1 >/dev/null
+         if [[ $? -eq 0 ]]; then
+            log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c 'touch /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster'"
             break
          else
-            log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
-            let iter=iter+1; sleep 30;
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep '/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists' 2>&1 >/dev/null
+            if [[ $? -eq 0 ]]; then
+               log_info "/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists"
+               break
+            else
+               log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
+               let iter=iter+1
+               sleep 30
+            fi
          fi
-      fi
       done
 
       log_info "Need to check if workers are looping for /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
-      opNotReady=1; iter=0; maxIter=240
+      opNotReady=1
+      iter=0
+      maxIter=240
       while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
-      oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have the same' 2>&1 > /dev/null
-      if [[ $? -eq 0 ]] ; then
-         log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
-         current_cid=$(oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- bash -c "cat /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID")
-         log_info "Current CID: $current_cid"
-         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c \"echo $current_cid > /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID\""
-         break
-      else
-         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'All workers have the same' 2>&1 > /dev/null
-         if [[ $? -eq 0 ]] ; then
-            log_info "All workers have the same /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+         oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have the same' 2>&1 >/dev/null
+         if [[ $? -eq 0 ]]; then
+            log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+            current_cid=$(oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- bash -c "cat /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID")
+            log_info "Current CID: $current_cid"
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c \"echo $current_cid > /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID\""
             break
          else
-            log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
-            let iter=iter+1; sleep 30;
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'All workers have the same' 2>&1 >/dev/null
+            if [[ $? -eq 0 ]]; then
+               log_info "All workers have the same /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+               break
+            else
+               log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
+               let iter=iter+1
+               sleep 30
+            fi
          fi
-      fi
       done
    fi
 
@@ -546,23 +571,23 @@ provision_dv(){
    log_info "DV instance provisioning successful"
 }
 
-log_entry(){
+log_entry() {
    echo "$(get_timestamp) $1"
 }
 
-log_info(){
+log_info() {
    log_entry "[INFO] $1"
 }
 
-log_error(){
+log_error() {
    log_entry "[ERROR] $1"
 }
 
-log_fatal(){
+log_fatal() {
    log_entry "[FATAL] $1"
 }
 
-log_warning(){
+log_warning() {
    log_entry "[WARNING] $1"
 }
 
@@ -575,12 +600,12 @@ init_parameters
 print_install_parameters
 
 #Actions for lite operator, lite CR
-log_info "Patch for dmc build after 248.."
-csvInjector=$(oc get namespacescope common-service  -n ${ZEN_OPERATORS_NAMESPACE} -o jsonpath='{.spec.csvInjector.enable}')
-if [ "${csvInjector}" = "false" ] ; then
- oc patch namespacescope common-service --type='json' -p='[{"op":"replace", "path": "/spec/csvInjector/enable", "value":true}]' -n ${ZEN_OPERATORS_NAMESPACE}
-fi
-log_info "Patch for dmc build after 248  Done"
+#log_info "Patch for dmc build after 248.."
+#csvInjector=$(oc get namespacescope common-service  -n ${ZEN_OPERATORS_NAMESPACE} -o jsonpath='{.spec.csvInjector.enable}')
+#if [ "${csvInjector}" = "false" ] ; then
+# oc patch namespacescope common-service --type='json' -p='[{"op":"replace", "path": "/spec/csvInjector/enable", "value":true}]' -n ${ZEN_OPERATORS_NAMESPACE}
+#fi
+#log_info "Patch for dmc build after 248  Done"
 
 ibm_dv_provisioner_role
 ibm_dv_provisioner_rolebinding
