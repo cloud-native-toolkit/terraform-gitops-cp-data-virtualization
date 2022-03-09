@@ -1,5 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: dv-provision-cm
-  namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
