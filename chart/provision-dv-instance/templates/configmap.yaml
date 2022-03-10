@@ -1,4 +1,8 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dv-provision-cm
+  namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
 data:
   create_dv_instance.sh: |
     #!/usr/bin/env sh
@@ -627,6 +631,8 @@ data:
     - apiGroups:
       - db2u.databases.ibm.com
       resources:
+      - bigsqls
+      - db2uclusters
       - dvs
       verbs:
       - create
@@ -681,7 +687,3 @@ data:
       },
       "transient_fields": {}
     }
-kind: ConfigMap
-metadata:
-  name: dv-provision-cm
-  namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
