@@ -34,7 +34,7 @@ module gitops_serviceaccount {
   source = "github.com/cloud-native-toolkit/terraform-gitops-service-account.git"
 
   gitops_config = var.gitops_config
-  git_credentials = var.gitops.git_credentials
+  git_credentials = var.git_credentials
   namespace = var.cpd_namespace
   name = "dv-instance-creation-sa"
   server_name = var.server_name
