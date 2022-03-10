@@ -33,11 +33,11 @@ module setup_clis {
 module gitops_serviceaccount {
   source = "github.com/cloud-native-toolkit/terraform-gitops-service-account.git"
 
-  gitops_config = module.gitops.gitops_config
-  git_credentials = module.gitops.git_credentials
-  namespace = cpd_namespace
+  gitops_config = var.gitops_config
+  git_credentials = var.gitops.git_credentials
+  namespace = var.cpd_namespace
   name = "dv-instance-creation-sa"
-  server_name = module.gitops.server_name
+  server_name = var.server_name
 }
 
 resource null_resource create_yaml {
