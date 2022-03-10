@@ -30,6 +30,16 @@ module setup_clis {
   source = "github.com/cloud-native-toolkit/terraform-util-clis.git"
 }
 
+module gitops_serviceaccount {
+  source = "github.com/cloud-native-toolkit/terraform-gitops-service-account.git"
+
+  gitops_config = module.gitops.gitops_config
+  git_credentials = module.gitops.git_credentials
+  namespace = cpd_namespace
+  name = "dv-instance-creation-sa"
+  server_name = module.gitops.server_name
+}
+
 resource null_resource create_yaml {
   provisioner "local-exec" {
     command = "${path.module}/scripts/create-yaml.sh '${local.name}' '${local.yaml_dir}'"
