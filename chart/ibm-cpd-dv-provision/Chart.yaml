@@ -3,4 +3,4 @@ name: ibm-cpd-dv-provision
 description: A Helm chart to perform pre-requisites for  Data Virtualization instance on IBM Cloud Pak for Data 
 type: application
 version: 0.2.0
-appVersion: "2.0"
+appVersion: v0.2.0

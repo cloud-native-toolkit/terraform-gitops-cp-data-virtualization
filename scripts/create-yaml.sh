@@ -1,9 +1,11 @@
+#!/usr/bin/env bash
+
 NAME="$1"
 DEST_DIR="$2"
 
 SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 MODULE_DIR=$(cd "${SCRIPT_DIR}/.."; pwd -P)
-CHART_DIR=$(cd "${MODULE_DIR}/charts/${NAME}"; pwd -P)
+CHART_DIR=$(cd "${MODULE_DIR}/chart/${NAME}"; pwd -P)
 
 mkdir -p $DEST_DIR
 
@@ -11,7 +13,7 @@ mkdir -p $DEST_DIR
 
 cp -R "${CHART_DIR}"/* "${DEST_DIR}"
 
-echo "${VALUES_CONTENT}" >"${DEST_DIR}/values.yaml"
+echo "${VALUES_CONTENT}" > "${DEST_DIR}/values.yaml"
 
 cat "${DEST_DIR}/values.yaml"
 
