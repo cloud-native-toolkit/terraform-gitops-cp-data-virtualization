@@ -40,7 +40,7 @@ module gitops_serviceaccount {
   server_name = var.server_name
 }
 
-module "gitops_rbac" {
+module "gitops_rbac_operators" {
   source = "github.com/cloud-native-toolkit/terraform-gitops-rbac.git?ref=v1.7.1"
 
 
@@ -50,6 +50,82 @@ module "gitops_rbac" {
   namespace                 = var.operator_namespace
   service_account_namespace = var.operator_namespace
   label                     = "dv-instance-creation-sa-co"
+  server_name               = var.server_name
+  cluster_scope             = true
+  rules = [
+    {
+      apiGroups = ["apps"]
+      resources = ["statefulsets"]
+      verbs     = ["get", "watch", "list", "patch"]
+    },
+    {
+      apiGroups = [""]
+      resources = ["pods"]
+      verbs     = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = [""]
+      resources = ["pods/log"]
+      verbs     = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = ["cpd.ibm.com"]
+      resources = ["ibmcpds"]
+      verbs     = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = ["operator.ibm.com"]
+      resources = ["namespacescopes"]
+      verbs     = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["dvservices"]
+      verbs     = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = ["apiextensions.k8s.io"]
+      resources = ["customresourcedefinitions"]
+      verbs     = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = ["rbac.authorization.k8s.io"]
+      resources = ["roles"]
+      verbs     = ["get", "watch", "list", "patch", "create"]
+    },
+    {
+      apiGroups = ["rbac.authorization.k8s.io"]
+      resources = ["rolebindings"]
+      verbs     = ["get", "watch", "list", "patch", "create"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["dvs"]
+      verbs     = ["get", "watch", "list", "patch", "create", "delete", "update"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["bigsqls"]
+      verbs     = ["get", "watch", "list", "patch", "create", "delete", "update"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.como"]
+      resources = ["db2uclusters"]
+      verbs     = ["get", "watch", "list", "patch", "create", "delete", "update"]
+    }
+  ]
+}
+
+module "gitops_rbac_cpd" {
+  source = "github.com/cloud-native-toolkit/terraform-gitops-rbac.git?ref=v1.7.1"
+
+
+  gitops_config             = var.gitops_config
+  git_credentials           = var.git_credentials
+  service_account_name      = "dv-instance-creation-sa"
+  namespace                 = var.cpd_namespace
+  service_account_namespace = var.cpd_namespace
+  label                     = "dv-instance-creation-sa-cpd"
   server_name               = var.server_name
   cluster_scope             = true
   rules = [

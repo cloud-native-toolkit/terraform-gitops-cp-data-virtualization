@@ -2,9 +2,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: dv-instance-create-job
-  namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
-  label:
-    app: test
 spec:
   parallelism: 1
   completions: 1
