@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dv-instance-create-job
+  namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
+  label:
+    app: test
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 3600
+  backoffLimit: 3
+  template:
+    metadata:
+      name: dv-instance-create-pod
+    spec:
+      volumes:
+      - configMap:
+          defaultMode: 0777
+          name: dv-provision-cm
+        name: dv-provision-cm
+      - name: temp
+        emptyDir: {}
+      restartPolicy: Never
+      serviceAccountName: dv-instance-creation-sa
+      containers:
+      - name: dv-instance-create-pod
+        image: quay.io/ibmgaragecloud/cli-tools
+        volumeMounts:
+          - mountPath: /scripts
+            name: dv-provision-cm
+          - name: temp
+            mountPath: /temp
+        command:
+          - /bin/sh
+        args:
+          - /scripts/create_dv_instance.sh 
+        env:
+          - name: CP4D_WEB_URL_USERNAME
+            value: "admin"
+          - name: CP4D_WEB_URL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: admin-user-details
+                key: initial_admin_password
+          - name: SERVICE_INSTANCE_NAMESPACE
+            value: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
+          - name: ZEN_OPERATORS_NAMESPACE
+            value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
+          - name: MEMORY_REQUEST_SIZE
+            value: {{ .Values.MEMORY_REQUEST_SIZE }}
+          - name: CPU_REQUEST_SIZE
+            value: {{ .Values.CPU_REQUEST_SIZE }}
+          - name: PERSISTENCE_STORAGE_CLASS
+            value: {{ .Values.PERSISTENCE_STORAGE_CLASS }}
+          - name: PERSISTENCE_STORAGE_SIZE
+            value: {{ .Values.PERSISTENCE_STORAGE_SIZE }}
+          - name: CACHING_STORAGE_CLASS
+            value: {{ .Values.CACHING_STORAGE_CLASS }}
+          - name: CACHING_STORAGE_SIZE
+            value: {{ .Values.CACHING_STORAGE_SIZE }}
+          - name: WORKER_STORAGE_CLASS
+            value: {{ .Values.WORKER_STORAGE_CLASS }}
+          - name: WORKER_STORAGE_SIZE
+            value: {{ .Values.WORKER_STORAGE_SIZE }}
+          - name: NUMBER_OF_WORKERS
+            value: {{ .Values.NUMBER_OF_WORKERS }}
