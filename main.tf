@@ -40,7 +40,7 @@ module gitops_serviceaccount {
   server_name = var.server_name
 }
 
-module "gitops_rbac_operators" {
+/*module "gitops_rbac_operators" {
   source = "github.com/cloud-native-toolkit/terraform-gitops-rbac.git?ref=v1.7.1"
 
 
@@ -190,7 +190,7 @@ module "gitops_rbac_cpd" {
       verbs     = ["get", "watch", "list", "patch", "create", "delete", "update"]
     }
   ]
-}
+}*/
 
 resource null_resource create_yaml {
   provisioner "local-exec" {
