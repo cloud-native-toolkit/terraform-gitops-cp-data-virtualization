@@ -111,6 +111,7 @@ module "gitops_rbac" {
   git_credentials           = var.git_credentials
   service_account_name      = "dv-instance-creation-sa"
   namespace                 = var.operator_namespace
+  service_account_namespace = var.cpd_namespace
   label                     = "dv-instance-creation-sa"
   server_name               = var.server_name
   cluster_scope             = true
