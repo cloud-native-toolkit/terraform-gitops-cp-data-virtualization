@@ -114,7 +114,7 @@ module "gitops_rbac" {
   label                     = "dv-instance-creation-sa"
   server_name               = var.server_name
   cluster_scope             = true
-  rbac_rules = [
+  rules = [
     {
       apiGroups = ["apps"]
       resources = ["statefulsets"]
