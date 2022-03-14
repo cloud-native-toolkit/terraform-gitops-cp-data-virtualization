@@ -143,6 +143,105 @@ data:
         fi
     }
 
+    get_dv_service_version() {
+        local dv_service_version=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service -o jsonpath="{.spec.version}")
+        echo $dv_service_version
+    }
+
+    #create the dv provisioner role
+    ibm_dv_provisioner_role() {
+
+        log_info "Create DV provisioner role"
+        oc create -f /scripts/ibm_dv_provisioner_role.yaml 2>&1
+
+    } #end of ibm_dv_provisioner_role
+
+    #create the ibm dv provisioner rolebinding
+    ibm_dv_provisioner_rolebinding() {
+
+        log_info "Create DV provisioner role binding"
+        oc create -f /scripts/ibm_dv_provisioner_rolebinding.yaml 2>&1
+
+    } #end of ibm_dv_provisioner_rolebinding
+
+    #create the jwt token:https://cloud.ibm.com/apidocs/cloud-pak-data
+    #to decode the jwt token use https://www.base64decode.org/
+    create_jwt_token() {
+
+        COOKIE_FILE="${SERVICE_INSTANCE_NAMESPACE}.bigsql.cookie"
+        COOKIE_FILE_PATH="${CMDDIR}/${COOKIE_FILE}"
+        log_info "The cookie file path is ${COOKIE_FILE_PATH}"
+        log_info "The CP4D WEB URL is ${CP4D_WEB_URL}"
+
+        #Delete existing cookie file
+        log_info "Delete existing cookie file"
+        rm -f ${COOKIE_FILE}
+
+        isIAMEnabled=$(oc get ibmcpd ibmcpd-cr -n ${SERVICE_INSTANCE_NAMESPACE} -o jsonpath={.spec.iamIntegration})
+
+        if [[ $isIAMEnabled == "true" ]]; then
+            platform_auth_namespace="ibm-common-services"
+            cp4dPassword=$(oc -n $platform_auth_namespace get secret platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 --decode)
+            log_info ""
+            log_info "IAM is enabled, using admin password: $cp4dPassword"
+            log_info ""
+            #Get I am Access token
+            route1=$(oc get route --no-headers --namespace $platform_auth_namespace | grep cp-console | awk '{print $2}')
+            PRETOKEN1=$(curl -sSk --request POST --url https://${route1}/idprovider/v1/auth/identitytoken -d "grant_type=password&username=admin&password=${cp4dPassword}&scope=openid")
+            pretoken=$(echo $PRETOKEN1 | tr "," "\n" | grep access_token | cut -c18- | rev | cut -c2- | rev)
+            #Use above token to genearte zen token
+            TOKEN=$(curl -sSk --request GET --url https://${CP4D_WEB_URL}/v1/preauth/validateAuth --header "username: admin" --header "iam-token: $pretoken")
+            token=$(echo $TOKEN | tr "," "\n" | grep accessToken | tail -n1 | cut -c16- | rev | cut -c2- | rev)
+        else
+            log_info "IAM is disabled, using admin password: password"
+            payload="{\"username\":\"${CP4D_WEB_URL_USERNAME}\",\"password\":\"${CP4D_WEB_URL_PASSWORD}\"}"
+            log_info "The JWT token paylod is ${payload}"
+
+            log_info "Generating the JWT token"
+            #this generates a token;
+            curl -v -c ${COOKIE_FILE_PATH} "https://${CP4D_WEB_URL}/v1/preauth/signin?context=${SERVICE_INSTANCE_NAMESPACE}" -H "Origin: https://${CP4D_WEB_URL}" -H "Accept-Encoding: gzip, deflate, br" -H "Accept-Language: en-US,en;q=0.9" -H "User-Agent: Mozilla/5.0" -H "Content-Type: application/json;charset=UTF-8" -H "Accept: application/json, text/plain, */*" -H "Referer: https://${CP4D_WEB_URL}/${SERVICE_INSTANCE_NAMESPACE}/" -H "Cookie: __preloginurl__=/${SERVICE_INSTANCE_NAMESPACE}/" -H "Connection: keep-alive" -d "${payload}" --compressed --insecure
+
+            log_info "Wait for 10 sec to get the JWT token"
+            sleep 10s
+
+            #store the token
+            token=$(awk '{for (I=1;I<=NF;I++) if ($I == "ibm-private-cloud-session") {print $(I+1)};}' ${COOKIE_FILE_PATH})
+
+        fi
+
+    } #end of create_jwt_token
+
+    #check dv head pod status
+    #Check using new bigsql CRD
+    check_dv_head_pod_status() {
+
+        log_info "Waiting for DV head pod to start running"
+
+        #Wait until the head pod is in 1/1 state & running
+        opNotReady=1
+        iter=0
+        maxIter=60
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $2}' | awk -F'/' ' BEGIN {count = 0}  $1 == $2 {count++ } END {print count}') -eq 1 ] && break
+            oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine
+            [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE | grep c-dv | grep Error | wc -l) -gt 0 ] && {
+                log_fatal "At least 1 DV  Pod is in error state, failing the provisioning now."
+                exit 1
+            }
+            log_info "Waiting for DV Head Pod to become ready.. ($iter / $maxIter)"
+            let iter=iter+1
+            sleep 20
+        done
+
+        [ $iter -eq $maxIter ] && {
+            log_warning "Maximum iteration has been reached and DV Head Pod still not running and 1/1, exit"
+            exit 1
+        }
+
+        log_info "DV head pod ready & running"
+
+    }
+
 
     echo "done"
   ibm_dv_provisioner_role.yaml: |
