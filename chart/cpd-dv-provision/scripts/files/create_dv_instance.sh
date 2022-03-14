@@ -339,5 +339,198 @@ trim_spaces() {
     echo $result
 }
 
+#Provision DV via Zen core REST API
+provision_dv() {
+    local dv_instance_version=$(get_dv_version) #default to 1.7.1, once we switch to CP4D River 4.0.2, default will move up to 1.7.2
+    local dv_service_version=$(get_dv_service_version)
+
+    if [ -z "${dv_service_version}" ]; then
+        log_warning "Unable to get DV service version. Use default DV instance version instead ${dv_instance_version}"
+    else
+        if [ "${dv_service_version}" != "${dv_instance_version}" ]; then
+            log_warning "DV service version ${dv_service_version} is different from expected DV instance version ${dv_instance_version}"
+            log_warning "Provision DV instance version using DV service version ${dv_service_version} instead"
+            dv_instance_version=${dv_service_version}
+        fi
+    fi
+
+    log_info "Provision DV instance version ${dv_instance_version}"
+
+    #check DV and db2u crds
+    oc get crd | grep -i bigsqls.db2u.databases.ibm.com
+    if [[ $? -ne 0 ]]; then
+        log_error "DV/db2u CRD bigsqls.db2u.databases.ibm.com missing"
+        exit 1
+    fi
+
+    oc get crd | grep -i db2uclusters.db2u.databases.ibm.com
+    if [[ $? -ne 0 ]]; then
+        log_error "DV/db2u CRD db2ucluster.db2u.databases.ibm.com missing"
+        exit 1
+    fi
+
+    log_info "Wait for stabilization"
+    sleep 120s
+
+    local current_timestamp=$(get_timestamp $VALUE_INT_NO) #print a "ugly" timestamp like "2021040319h45m09s"
+    log_info "Current Timestamp: $current_timestamp"
+
+    #create the jwt token:https://cloud.ibm.com/apidocs/cloud-pak-data
+    create_jwt_token
+    log_info "The jwt token is ${token}"
+    sleep 10s
+
+    if [ "${token}" == "" ]; then
+        log_fatal "JWT token is not generated "
+        log_fatal ""
+        exit 1
+    fi
+
+    NUMBER_OF_WORKERS=$(trim_spaces "${NUMBER_OF_WORKERS}")
+
+    MEMORY_REQUEST_SIZE=$(trim_spaces "${MEMORY_REQUEST_SIZE}")
+    CPU_REQUEST_SIZE=$(trim_spaces "${CPU_REQUEST_SIZE}")
+
+    PERSISTENCE_STORAGE_CLASS=$(trim_spaces "${PERSISTENCE_STORAGE_CLASS}")
+    PERSISTENCE_STORAGE_SIZE=$(trim_spaces "${PERSISTENCE_STORAGE_SIZE}")
+
+    WORKER_STORAGE_CLASS=$(trim_spaces "${WORKER_STORAGE_CLASS}")
+    WORKER_STORAGE_SIZE=$(trim_spaces "${WORKER_STORAGE_SIZE}")
+
+    CACHING_STORAGE_CLASS=$(trim_spaces "${CACHING_STORAGE_CLASS}")
+    CACHING_STORAGE_SIZE=$(trim_spaces "${CACHING_STORAGE_SIZE}")
+
+    log_info "Update DV provisioning parameters"
+    #Update newdv.json
+
+    local current_json="$(echo $DV_INSTALL_JSON_FILE_PATH | sed "s/.json//").$current_timestamp.json"
+    log_info "Provision DV via Zen core API with payload $current_json"
+    cp "${MNTDIR}/${DV_INSTALL_JSON_FILE_PATH}" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV instance version"
+    sed -i "s/\"addon_version\": \"1.7.0\"/\"addon_version\": \"${dv_instance_version}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV service instance namespace"
+    sed -i "s/\"namespace\": \"zen\"/\"namespace\": \"${SERVICE_INSTANCE_NAMESPACE}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV requested memory size"
+    sed -i "s/\"resources.dv.requests.memory\": \"8Gi\"/\"resources.dv.requests.memory\": \"${MEMORY_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
+    sed -i "s/\"memory\": \"8\"/\"memory\": \"$(echo ${MEMORY_REQUEST_SIZE} | sed "s/Gi//g")\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV requested cpu size"
+    sed -i "s/\"resources.dv.requests.cpu\": \"4\"/\"resources.dv.requests.cpu\": \"${CPU_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
+    sed -i "s/\"cpu\": \"4\"/\"cpu\": \"${CPU_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV persistence storage class"
+    sed -i "s/\"persistence.storageClass\": \"nfs-client\"/\"persistence.storageClass\": \"${PERSISTENCE_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV persistence storage size"
+    sed -i "s/\"persistence.size\": \"100Gi\"/\"persistence.size\": \"${PERSISTENCE_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV caching storage class"
+    sed -i "s/\"persistence.cachingpv.storageClass\": \"nfs-client\"/\"persistence.cachingpv.storageClass\": \"${CACHING_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV caching storage size"
+    sed -i "s/\"persistence.cachingpv.size\": \"100Gi\"/\"persistence.cachingpv.size\": \"${CACHING_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV worker storage class"
+    sed -i "s/\"persistence.workerpv.storageClass\": \"nfs-client\"/\"persistence.workerpv.storageClass\": \"${WORKER_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+    log_info "Update DV worker storage size"
+    sed -i "s/\"persistence.workerpv.size\": \"100Gi\"/\"persistence.workerpv.size\": \"${WORKER_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+    #We do not need to add one more pod because it's handled in dv-cr.yaml CR template
+    #i.e size: {{ add .parameters.workerCount 1 }}
+    log_info "Update DV Number of Workers"
+    sed -i "s|\"workerCount\": \"1\"|\"workerCount\": \"${NUMBER_OF_WORKERS}\"|g" "${CMDDIR}/${current_json}"
+
+    #Provision
+    log_info "Provision DV instance"
+    cat "${CMDDIR}/${current_json}"
+
+    #v3 api
+    if [[ $isIAMEnabled == "true" ]]; then
+        curl -v -k -H "Authorization: Bearer $token" -H "Content-Type: application/json" -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}" -H "jwt-auth-user-payload: {\"accessToken\": \"$token\"}"
+    else
+        curl -v -k -H "Content-Type: application/json" -b ${COOKIE_FILE_PATH} -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}"
+    fi
+
+    #This impacts newer OC 4.6.xxx, 4.7 and 4.8 clusters
+    #A real fix should be from db2u but for now, we work around it by disabling tty
+    #https://ibm-analytics.slack.com/archives/C019EJ0QH4Y/p1626098470003300?thread_ts=1625244478.403600&cid=C019EJ0QH4Y
+    #https://github.ibm.com/DB2/tracker/issues/12051#issuecomment-33324336
+    log_info "Waiting for DV statefulset c-db2u-dv-db2u to be created in order to disable tty check"
+    opNotReady=1
+    iter=0
+    maxIter=60
+    while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+        oc get sts c-db2u-dv-db2u
+        if [[ $? -eq 0 ]]; then
+            log_info "Patch DV statefulset c-db2u-dv-db2u with tty workaround"
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} patch sts c-db2u-dv-db2u -p='{"spec":{"template":{"spec":{"containers":[{"name":"db2u","tty":false}]}}}}}'
+            break
+        else
+            log_info "Waiting for statefulset c-db2u-dv-db2u to be created by db2u operator.. ($iter / $maxIter)"
+            let iter=iter+1
+            sleep 30
+        fi
+    done
+
+    if [ "$PERSISTENCE_STORAGE_CLASS" == *"ocs"* ]; then
+        log_info "PERSISTENCE_STORAGE_CLASS $PERSISTENCE_STORAGE_CLASS is OCS"
+        log_info "Need to check if workers are looping for /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
+        opNotReady=1
+        iter=0
+        maxIter=240
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster' 2>&1 >/dev/null
+            if [[ $? -eq 0 ]]; then
+                log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c 'touch /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster'"
+                break
+            else
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep '/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists' 2>&1 >/dev/null
+                if [[ $? -eq 0 ]]; then
+                    log_info "/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists"
+                    break
+                else
+                    log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
+                    let iter=iter+1
+                    sleep 30
+                fi
+            fi
+        done
+
+        log_info "Need to check if workers are looping for /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+        opNotReady=1
+        iter=0
+        maxIter=240
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have the same' 2>&1 >/dev/null
+            if [[ $? -eq 0 ]]; then
+                log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+                current_cid=$(oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- bash -c "cat /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID")
+                log_info "Current CID: $current_cid"
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c \"echo $current_cid > /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID\""
+                break
+            else
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'All workers have the same' 2>&1 >/dev/null
+                if [[ $? -eq 0 ]]; then
+                    log_info "All workers have the same /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+                    break
+                else
+                    log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
+                    let iter=iter+1
+                    sleep 30
+                fi
+            fi
+        done
+    fi
+
+    log_info "DV instance provision submitted. Check ICP4D web console for provision status"
+    check_dv_provision
+    log_info "DV instance provisioning successful"
+}
+
 
 echo "done"
