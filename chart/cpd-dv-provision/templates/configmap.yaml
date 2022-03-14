@@ -4,6 +4,8 @@ metadata:
   name: dv-provision-cm
   labels:
     app: dvprovision
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
 data:
   newdv.json: |-
     {
