@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dv-instance-create-job
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 3600
+  backoffLimit: 3
+  template:
+    metadata:
+      name: dv-instance-create-pod
+    spec:
+      restartPolicy: Never
+      serviceAccountName: dv-instance-creation-sa
+      containers:
+      - name: dv-instance-create-pod
+        image: quay.io/ibmgaragecloud/cli-tools
+        command:
+          - /bin/sh
+        args:
+          - ls 
+       
