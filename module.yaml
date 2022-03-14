@@ -1,8 +1,8 @@
-name: gitops-terraform-gitops-data-virtualization
+name: gitops-cp-data-virtualization
 type: gitops
 description: >-
   Module to populate a gitops repo with the resources to provision
-  terraform-gitops-data-virtualization
+  gitops-cp-data-virtualization
 tags:
   - tools
   - gitops
