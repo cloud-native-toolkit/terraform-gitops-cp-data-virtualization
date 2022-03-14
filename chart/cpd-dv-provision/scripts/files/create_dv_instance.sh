@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 ################################################################################
 #
@@ -24,8 +24,6 @@ DV_CUSTOM_RELEASE=""
 
 isIAMEnabled="false"
 
-#lite custom install reuqires three namespaces
-# ibm-common-services that hosts bedrock
 # cpd-operators that hosts all cp4d operators including ibmcpd
 # $SERVICE_INSTANCE_NAMESPACE that hosts cp4d pods
 ZEN_OPERATORS_NAMESPACE="${ZEN_OPERATORS_NAMESPACE}"
@@ -598,14 +596,6 @@ log_warning() {
 #Common functions/tasks
 init_parameters
 print_install_parameters
-
-#Actions for lite operator, lite CR
-#log_info "Patch for dmc build after 248.."
-#csvInjector=$(oc get namespacescope common-service  -n ${ZEN_OPERATORS_NAMESPACE} -o jsonpath='{.spec.csvInjector.enable}')
-#if [ "${csvInjector}" = "false" ] ; then
-# oc patch namespacescope common-service --type='json' -p='[{"op":"replace", "path": "/spec/csvInjector/enable", "value":true}]' -n ${ZEN_OPERATORS_NAMESPACE}
-#fi
-#log_info "Patch for dmc build after 248  Done"
 
 ibm_dv_provisioner_role
 ibm_dv_provisioner_rolebinding
