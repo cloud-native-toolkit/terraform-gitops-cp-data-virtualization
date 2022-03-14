@@ -52,41 +52,4 @@ DV_INSTALL_JSON_FILE_PATH="newdv.json"
 MNTDIR="/scripts"
 CMDDIR="/temp"
 
-Usage() {
-    cat <<EOF
-DETAILED OPTIONS HELP
-
- #General Install Options
-   --service-instance-namespace
-   Service instance namespace. "liteproject" by default.
-   --cpd-release
-   the release of CPD that determines which branch of cpd-case repo we download CASE bundle tar balls
-
- #General Access Parameters
-   --cp4d-web-username
-   Username for cp4d web account, defaults to openshift username
-   --cp4d-web-password
-   Password for cp4d web account, defaults to openshift password
-
- # DV provisioning Parameters
-   --memory-request-size
-   Requested memory size. Use "8Gi" by default.
-   --cpu-request-size
-   Requested CPU size. Use "4" by default.
-   --persistence-storage-class
-   Persistence storage class. Use "nfs-client" by default.
-   --persistence-storage-size
-   Persistence storage size. Use "100Gi" by default.
-   --caching-storage-class
-   Caching storage class. Use "nfs-client" by default.
-   --caching-storage-size
-   Caching storage size. Use "100Gi" by default.
-   --worker-storage-class
-   Worker storage class. Use "nfs-client" by default.
-   --worker-storage-size
-   Worker storage size. Use "100Gi" by default.
-
-EOF
-}
-
 echo "done"
