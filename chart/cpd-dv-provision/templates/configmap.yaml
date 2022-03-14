@@ -242,6 +242,113 @@ data:
 
     }
 
+    #check dv worker pod status
+    #Check using new bigsql CRD
+    check_dv_worker_pod_status() {
+
+        log_info "Waiting for DV worker pod to start running"
+
+        #Wait until the worker pod is in 1/1 state & running
+        opNotReady=1
+        iter=0
+        maxIter=60
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name\!=dashmpp-head-0,role=db,type=engine | awk '{print $2}' | awk -F'/' ' BEGIN {count = 0}  $1 == $2 {count++ } END {print count}') -eq ${NUMBER_OF_WORKERS} ] && break
+            oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name!=dashmpp-head-0,role=db,type=engine
+            [ $(oc get pod -n $SERVICE_INSTANCE_NAMESPACE | grep c-dv | grep Error | wc -l) -gt 0 ] && {
+                log_fatal "At least 1 DV pod is in error state, failing the provisioning now."
+                exit 1
+            }
+            log_info "Waiting for required DV Worker Pods(${NUMBER_OF_WORKERS}) to become ready.. ($iter / $maxIter)"
+            let iter=iter+1
+            sleep 20
+        done
+
+        [ $iter -eq $maxIter ] && {
+            log_warning "Maximum iteration has been reached and DV Workers Pods still not running and 1/1, exit"
+            exit 1
+        }
+
+        log_info "DV worker pod(s) ready & running"
+
+    }
+
+    #check dv is ready to use
+    check_dv_ready_state() {
+
+        log_info "DV Readiness Check"
+
+        dvenginePod=$(oc get pod -n $SERVICE_INSTANCE_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
+        log_info "DV engine head pod is $dvenginePod"
+
+        #Wait until the DV service is  ready
+        dvNotReady=1
+        iter=0
+        maxIter=120 #DV takes longer than BigSQL to become ready
+        while [ $dvNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            oc logs -n $SERVICE_INSTANCE_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" >/dev/null
+            dvNotReady=$?
+            if [ $dvNotReady -eq 0 ]; then
+                break
+            else
+                log_info "Waiting for the DV service to be ready. Recheck in 30 seconds"
+                let iter=iter+1
+                sleep 30
+            fi
+        done
+
+        if [ $dvNotReady -eq 1 ]; then
+            log_info "The container logs are:"
+            oc logs -n $SERVICE_INSTANCE_NAMESPACE $bigsqlenginePod | tail -300
+            log_error "DV service is still not ready after waiting for $maxIter intervals of 30 seconds"
+            exit 1
+        else
+            echo "[INFO] DV service is ready... [current check is phrase -> db2uctl markers get SETUP_COMPLETE]"
+        fi
+    }
+
+    #We do not use this by default because DV validation script waits and checks if DV pods are running
+    check_dv_provision() {
+
+        log_info "Check DV provisioning, this operation may take some time.. "
+        #wait for head pod to run
+        check_dv_head_pod_status
+        check_dv_worker_pod_status
+        check_dv_ready_state
+
+        echo -e "\e[1;42m DV  PROVISIONING COMPLETED  \e[0m"
+
+        log_info "OpenShift version:"
+        oc version
+        log_info "cloudctl version:"
+        ./${CLOUDCTLEXEC} version
+        log_info "lite version"
+        oc get zenservice lite-cr -n $SERVICE_INSTANCE_NAMESPACE -o yaml | grep ' zenOperatorBuildNumber: '
+
+        #v3 api to fetch instances
+        log_info "Listing all provisioned cp4d instances"
+        create_jwt_token
+        curl -k -v -H "Authorization: Bearer ${token}" -X GET https://${CP4D_WEB_URL}/zen-data/v3/service_instances
+
+    } #End of get_installed_versions
+
+    get_timestamp() {
+        local pretty_print="${1:-$VALUE_INT_YES}"
+        if [ $pretty_print -eq $VALUE_INT_YES ]; then
+            #Default to pretty print for logging
+            echo "["$(date -u +"%H:%M:%S,%3N %Z")"]"
+        else
+            #"2021040319h45m09s" style to be used in file names
+            echo $(date "+%Y%m%d%Hh%Mm%Ss")
+        fi
+    }
+
+    trim_spaces() {
+        local ENTRIES="$@"
+        result=$(echo "$ENTRIES" | sed -e 's/^ *//' -e 's/ *$//')
+        echo $result
+    }
+
 
     echo "done"
   ibm_dv_provisioner_role.yaml: |
