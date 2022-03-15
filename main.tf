@@ -35,70 +35,9 @@ module setup_service_account {
 
   gitops_config = var.gitops_config
   git_credentials = var.git_credentials
-  namespace = var.cpd_namespace
+  namespace = "default"
   name = var.service_account_name
-  server_name = var.server_name
-  rbac_cluster_scope = true
-  rbac_rules = [{
-    apiGroups = ["apps"]
-    resources = ["statefulsets"]
-    verbs = ["get", "watch", "list", "patch"]
-  },
-  {
-    apiGroups = [""]
-    resources = ["pods"]
-    verbs = ["get", "watch", "list"]
-  },
-  {
-    apiGroups = [""]
-    resources = ["pods/log"]
-    verbs = ["get", "watch", "list"]
-  },
-  {
-    apiGroups = ["cpd.ibm.com"]
-    resources = ["ibmcpds"]
-    verbs = ["get", "watch", "list"]
-  },
-  {
-    apiGroups = ["operator.ibm.com"]
-    resources = ["namespacescopes"]
-    verbs = ["get", "watch", "list"]
-  },
-  {
-    apiGroups = ["db2u.databases.ibm.com"]
-    resources = ["dvservices"]
-    verbs = ["get", "watch", "list"]
-  },
-  {
-    apiGroups = ["apiextensions.k8s.io"]
-    resources = ["customresourcedefinitions"]
-    verbs = ["get", "watch", "list"]
-  },
-  {
-    apiGroups = ["rbac.authorization.k8s.io"]
-    resources = ["roles"]
-    verbs = ["get", "watch", "list", "create", "patch"]
-  },
-  {
-    apiGroups = ["rbac.authorization.k8s.io"]
-    resources = ["rolebindings"]
-    verbs = ["get", "watch", "list", "create", "patch"]
-  },
-  {
-    apiGroups = ["db2u.databases.ibm.com"]
-    resources = ["dvs"]
-    verbs = ["get", "watch", "list", "create", "patch", "delete", "update"]
-  },
-  {
-    apiGroups = ["db2u.databases.ibm.com"]
-    resources = ["bigsqls"]
-    verbs = ["get", "watch", "list", "create", "patch", "delete", "update"]
-  },
-  {
-    apiGroups = ["db2u.databases.ibm.com"]
-    resources = ["db2uclusters"]
-    verbs = ["get", "watch", "list", "create", "patch", "delete", "update"]
-  }]
+  server_name = var.server_name  
 }
 
 resource null_resource create_prerequisites_yaml {
