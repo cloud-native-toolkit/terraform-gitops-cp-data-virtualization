@@ -448,6 +448,12 @@ data:
         log_info "Update DV worker storage size"
         sed -i "s/\"persistence.workerpv.size\": \"100Gi\"/\"persistence.workerpv.size\": \"${WORKER_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
 
+        log_info "Update DV Number of Workers"
+        sed -i "s|\"workerCount\": \"1\"|\"workerCount\": \"${NUMBER_OF_WORKERS}\"|g" "${CMDDIR}/${current_json}"
+
+        log_info "Provision DV instance"
+        cat "${CMDDIR}/${current_json}"
+
     }
 
     echo "done"
