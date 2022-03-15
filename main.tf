@@ -97,7 +97,12 @@ module setup_rbac {
     {
       apiGroups = [""]
       resources = ["pods"]
-      verbs = ["create", "delete", "get", "list", "patch", "update"]
+      verbs = ["get", "list", "watch"]
+    },
+    {
+      apiGroups = [""]
+      resources = ["pods/log"]
+      verbs = ["get", "list", "watch"]
     }
   ]
   server_name               = var.server_name
