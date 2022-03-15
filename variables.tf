@@ -91,3 +91,9 @@ variable "operator_namespace" {
   description = "operator namespace"
   default     = "cpd-operators"
 }
+
+variable "cpu_size" {
+  type        = string
+  description = "CPU Request Size"
+  default     = "6"
+}

@@ -82,3 +82,9 @@ variable "cpd_namespace" {
   description = "CPD namespace"
   default = "gitops-cp4d-instance"
 }
+
+variable "cpu_size" {
+  type        = string
+  description = "CPU Request Size"
+  default     = "6"
+}
