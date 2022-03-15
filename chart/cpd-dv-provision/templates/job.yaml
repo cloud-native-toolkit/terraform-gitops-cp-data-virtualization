@@ -43,11 +43,11 @@ spec:
           - name: SERVICE_INSTANCE_NAMESPACE
             value: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
           - name: ZEN_OPERATORS_NAMESPACE
-            value: "cpd-operators"
+            value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
           - name: MEMORY_REQUEST_SIZE
-            value: "16Gi"
+            value: {{ .Values.MEMORY_REQUEST_SIZE }}
           - name: CPU_REQUEST_SIZE
-            value: "4"
+            value: {{ .Values.CPU_REQUEST_SIZE }}
           - name: PERSISTENCE_STORAGE_CLASS
             value: "portworx-db2-rwx-sc"
           - name: PERSISTENCE_STORAGE_SIZE

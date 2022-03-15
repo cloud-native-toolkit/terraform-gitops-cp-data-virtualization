@@ -8,8 +8,8 @@ locals {
   values_content = {
     SERVICE_INSTANCE_NAMESPACE = var.cpd_namespace
     ZEN_OPERATORS_NAMESPACE = var.operator_namespace
-    MEMORY_REQUEST_SIZE = "16Gi"
-    CPU_REQUEST_SIZE = "4"
+    MEMORY_REQUEST_SIZE = "24Gi"
+    CPU_REQUEST_SIZE = "6"
     PERSISTENCE_STORAGE_CLASS = "portworx-db2-rwx-sc"
     PERSISTENCE_STORAGE_SIZE = "50Gi"
     CACHING_STORAGE_CLASS = "portworx-db2-rwx-sc"
