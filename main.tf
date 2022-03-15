@@ -31,7 +31,7 @@ module setup_clis {
 }
 
 module setup_service_account {
-  source = "https://github.com/cloud-native-toolkit/terraform-gitops-service-account.git"
+  source = "github.com/cloud-native-toolkit/terraform-gitops-service-account.git"
 
   gitops_config = var.gitops_config
   git_credentials = var.git_credentials
