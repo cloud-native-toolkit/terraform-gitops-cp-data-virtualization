@@ -454,6 +454,29 @@ data:
         log_info "Provision DV instance"
         cat "${CMDDIR}/${current_json}"
 
+        if [[ $isIAMEnabled == "true" ]]; then
+            curl -v -k -H "Authorization: Bearer $token" -H "Content-Type: application/json" -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}" -H "jwt-auth-user-payload: {\"accessToken\": \"$token\"}"
+        else
+            curl -v -k -H "Content-Type: application/json" -b ${COOKIE_FILE_PATH} -X POST https://${CP4D_WEB_URL}/zen-data/v3/service_instances -T "${CMDDIR}/${current_json}"
+        fi
+
+        log_info "Waiting for DV statefulset c-db2u-dv-db2u to be created in order to disable tty check"
+        opNotReady=1
+        iter=0
+        maxIter=60
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            oc get sts c-db2u-dv-db2u
+            if [[ $? -eq 0 ]]; then
+                log_info "Patch DV statefulset c-db2u-dv-db2u with tty workaround"
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} patch sts c-db2u-dv-db2u -p='{"spec":{"template":{"spec":{"containers":[{"name":"db2u","tty":false}]}}}}}'
+                break
+            else
+                log_info "Waiting for statefulset c-db2u-dv-db2u to be created by db2u operator.. ($iter / $maxIter)"
+                let iter=iter+1
+                sleep 30
+            fi
+        done
+
     }
 
     echo "done"
