@@ -41,7 +41,7 @@ spec:
                 name: admin-user-details
                 key: initial_admin_password
           - name: SERVICE_INSTANCE_NAMESPACE
-            value: "gitops-cp4d-instance"
+            value: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
           - name: ZEN_OPERATORS_NAMESPACE
             value: "cpd-operators"
           - name: MEMORY_REQUEST_SIZE

@@ -4,7 +4,7 @@ metadata:
   name: dv-instance-creation-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: dv-instance-create-reader
 subjects:
   - kind: ServiceAccount
@@ -18,7 +18,7 @@ metadata:
   name: dv-instance-creation-binding-ics
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: dv-instance-create-reader
 subjects:
   - kind: ServiceAccount
