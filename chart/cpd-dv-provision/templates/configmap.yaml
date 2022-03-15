@@ -395,6 +395,69 @@ data:
             log_fatal ""
             exit 1
         fi
+
+        NUMBER_OF_WORKERS=$(trim_spaces "${NUMBER_OF_WORKERS}")
+
+        MEMORY_REQUEST_SIZE=$(trim_spaces "${MEMORY_REQUEST_SIZE}")
+        CPU_REQUEST_SIZE=$(trim_spaces "${CPU_REQUEST_SIZE}")
+
+        PERSISTENCE_STORAGE_CLASS=$(trim_spaces "${PERSISTENCE_STORAGE_CLASS}")
+        PERSISTENCE_STORAGE_SIZE=$(trim_spaces "${PERSISTENCE_STORAGE_SIZE}")
+
+        WORKER_STORAGE_CLASS=$(trim_spaces "${WORKER_STORAGE_CLASS}")
+        WORKER_STORAGE_SIZE=$(trim_spaces "${WORKER_STORAGE_SIZE}")
+
+        CACHING_STORAGE_CLASS=$(trim_spaces "${CACHING_STORAGE_CLASS}")
+        CACHING_STORAGE_SIZE=$(trim_spaces "${CACHING_STORAGE_SIZE}")
+
+        log_info "Update DV provisioning parameters"
+        #Update newdv.json
+
+        local current_json="$(echo $DV_INSTALL_JSON_FILE_PATH | sed "s/.json//").$current_timestamp.json"
+        log_info "Provision DV via Zen core API with payload $current_json"
+        cp "${MNTDIR}/${DV_INSTALL_JSON_FILE_PATH}" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV instance version"
+        sed -i "s/\"addon_version\": \"1.7.0\"/\"addon_version\": \"${dv_instance_version}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV service instance namespace"
+        sed -i "s/\"namespace\": \"zen\"/\"namespace\": \"${SERVICE_INSTANCE_NAMESPACE}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV requested memory size"
+        sed -i "s/\"resources.dv.requests.memory\": \"8Gi\"/\"resources.dv.requests.memory\": \"${MEMORY_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
+        sed -i "s/\"memory\": \"8\"/\"memory\": \"$(echo ${MEMORY_REQUEST_SIZE} | sed "s/Gi//g")\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV requested cpu size"
+        sed -i "s/\"resources.dv.requests.cpu\": \"4\"/\"resources.dv.requests.cpu\": \"${CPU_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
+        sed -i "s/\"cpu\": \"4\"/\"cpu\": \"${CPU_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV persistence storage class"
+        sed -i "s/\"persistence.storageClass\": \"nfs-client\"/\"persistence.storageClass\": \"${PERSISTENCE_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV persistence storage size"
+        sed -i "s/\"persistence.size\": \"100Gi\"/\"persistence.size\": \"${PERSISTENCE_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV caching storage class"
+        sed -i "s/\"persistence.cachingpv.storageClass\": \"nfs-client\"/\"persistence.cachingpv.storageClass\": \"${CACHING_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV caching storage size"
+        sed -i "s/\"persistence.cachingpv.size\": \"100Gi\"/\"persistence.cachingpv.size\": \"${CACHING_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV worker storage class"
+        sed -i "s/\"persistence.workerpv.storageClass\": \"nfs-client\"/\"persistence.workerpv.storageClass\": \"${WORKER_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV worker storage size"
+        sed -i "s/\"persistence.workerpv.size\": \"100Gi\"/\"persistence.workerpv.size\": \"${WORKER_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+        #We do not need to add one more pod because it's handled in dv-cr.yaml CR template
+        #i.e size: {{ add .parameters.workerCount 1 }}
+        log_info "Update DV Number of Workers"
+        sed -i "s|\"workerCount\": \"1\"|\"workerCount\": \"${NUMBER_OF_WORKERS}\"|g" "${CMDDIR}/${current_json}"
+
+        #Provision
+        log_info "Provision DV instance"
+        cat "${CMDDIR}/${current_json}"
+
     }
 
     echo "done"
