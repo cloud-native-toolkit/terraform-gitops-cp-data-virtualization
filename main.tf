@@ -96,7 +96,7 @@ module setup_rbac {
     },
     {
       apiGroups = [""]
-      resources = ["apps"]
+      resources = ["pods"]
       verbs = ["create", "delete", "get", "list", "patch", "update"]
     }
   ]

@@ -193,9 +193,7 @@ data:
             TOKEN=$(curl -sSk --request GET --url https://${CP4D_WEB_URL}/v1/preauth/validateAuth --header "username: admin" --header "iam-token: $pretoken")
             token=$(echo $TOKEN | tr "," "\n" | grep accessToken | tail -n1 | cut -c16- | rev | cut -c2- | rev)
         else
-            log_info "IAM is disabled, using admin password: password"
             payload="{\"username\":\"${CP4D_WEB_URL_USERNAME}\",\"password\":\"${CP4D_WEB_URL_PASSWORD}\"}"
-            log_info "The JWT token paylod is ${payload}"
 
             log_info "Generating the JWT token"
             #this generates a token;
