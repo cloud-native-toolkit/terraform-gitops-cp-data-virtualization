@@ -49,16 +49,16 @@ spec:
           - name: CPU_REQUEST_SIZE
             value: {{ .Values.CPU_REQUEST_SIZE }}
           - name: PERSISTENCE_STORAGE_CLASS
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "portworx-db2-rwx-sc"
           - name: PERSISTENCE_STORAGE_SIZE
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "50Gi"
           - name: CACHING_STORAGE_CLASS
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "portworx-db2-rwx-sc"
           - name: CACHING_STORAGE_SIZE
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "50Gi"
           - name: WORKER_STORAGE_CLASS
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "portworx-db2-rwx-sc"
           - name: WORKER_STORAGE_SIZE
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "50Gi"
           - name: NUMBER_OF_WORKERS
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "1"
