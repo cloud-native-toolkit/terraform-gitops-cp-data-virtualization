@@ -61,4 +61,4 @@ spec:
           - name: WORKER_STORAGE_SIZE
             value: {{ .Values.WORKER_STORAGE_SIZE }}
           - name: NUMBER_OF_WORKERS
-            value: "1"
+            value: {{ .Values.NUMBER_OF_WORKERS }}
