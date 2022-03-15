@@ -78,6 +78,16 @@ module setup_rbac {
       apiGroups = ["db2u.databases.ibm.com"]
       resources = ["dvs"]
       verbs = ["create", "delete", "get", "list", "patch", "update"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["dvservices"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
+    },
+    {
+      apiGroups = ["apiextensions.k8s.io"]
+      resources = ["customresourcedefinitions"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
     }
   ]
   server_name               = var.server_name
