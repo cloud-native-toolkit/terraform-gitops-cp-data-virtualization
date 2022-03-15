@@ -555,6 +555,13 @@ data:
     }
 
     echo "done"
+
+    init_parameters
+    print_install_parameters
+
+    ibm_dv_provisioner_role
+    ibm_dv_provisioner_rolebinding
+    provision_dv
   ibm_dv_provisioner_role.yaml: |
     apiVersion: rbac.authorization.k8s.io/v1
     kind: Role

@@ -545,3 +545,10 @@ log_warning() {
 }
 
 echo "done"
+
+init_parameters
+print_install_parameters
+
+ibm_dv_provisioner_role
+ibm_dv_provisioner_rolebinding
+provision_dv
