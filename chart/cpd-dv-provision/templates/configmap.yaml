@@ -528,6 +528,30 @@ data:
             done
         fi
 
+        log_info "DV instance provision submitted. Check ICP4D web console for provision status"
+        check_dv_provision
+        log_info "DV instance provisioning successful"
+
+    }
+
+    log_entry() {
+        echo "$(get_timestamp) $1"
+    }
+
+    log_info() {
+        log_entry "[INFO] $1"
+    }
+
+    log_error() {
+        log_entry "[ERROR] $1"
+    }
+
+    log_fatal() {
+        log_entry "[FATAL] $1"
+    }
+
+    log_warning() {
+        log_entry "[WARNING] $1"
     }
 
     echo "done"
