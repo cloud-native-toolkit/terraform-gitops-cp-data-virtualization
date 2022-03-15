@@ -6,6 +6,17 @@ locals {
   prerequisites_yaml_dir = "${path.cwd}/.tmp/${local.name}/chart/${local.prerequisites_name}"
   service_url   = "http://${local.name}.${var.namespace}"
   values_content = {
+    SERVICE_INSTANCE_NAMESPACE = var.cpd_namespace
+    ZEN_OPERATORS_NAMESPACE = var.operator_namespace
+    MEMORY_REQUEST_SIZE = "16Gi"
+    CPU_REQUEST_SIZE = "4"
+    PERSISTENCE_STORAGE_CLASS = "portworx-db2-rwx-sc"
+    PERSISTENCE_STORAGE_SIZE = "50Gi"
+    CACHING_STORAGE_CLASS = "portworx-db2-rwx-sc"
+    CACHING_STORAGE_SIZE = "50Gi"
+    WORKER_STORAGE_CLASS = "portworx-db2-rwx-sc"
+    WORKER_STORAGE_SIZE = "50Gi"
+    NUMBER_OF_WORKERS = "1"
   }
   layer = "services"
   type  = "base"

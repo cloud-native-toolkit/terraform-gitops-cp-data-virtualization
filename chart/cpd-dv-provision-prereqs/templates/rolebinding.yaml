@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dv-instance-creation-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dv-instance-create-reader
+subjects:
+  - kind: ServiceAccount
+    name: dv-instance-creation-sa
+    namespace: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
