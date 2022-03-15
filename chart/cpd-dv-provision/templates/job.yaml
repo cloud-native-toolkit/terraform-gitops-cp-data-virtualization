@@ -45,7 +45,7 @@ spec:
           - name: ZEN_OPERATORS_NAMESPACE
             value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
           - name: MEMORY_REQUEST_SIZE
-            value: "16Gi"
+            value: {{ .Values.MEMORY_REQUEST_SIZE }}
           - name: CPU_REQUEST_SIZE
             value: "4"
           - name: PERSISTENCE_STORAGE_CLASS
