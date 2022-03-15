@@ -63,6 +63,21 @@ module setup_rbac {
       apiGroups = ["rbac.authorization.k8s.io"]
       resources = ["rolebindings"]
       verbs = ["get", "watch", "list", "create", "patch"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["bigsqls"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["db2uclusters"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
+    },
+    {
+      apiGroups = ["db2u.databases.ibm.com"]
+      resources = ["dvs"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
     }
   ]
   server_name               = var.server_name
