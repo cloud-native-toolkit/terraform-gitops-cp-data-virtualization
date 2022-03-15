@@ -467,6 +467,57 @@ provision_dv() {
         fi
     done
 
+    if [ "$PERSISTENCE_STORAGE_CLASS" == *"ocs"* ]; then
+        log_info "PERSISTENCE_STORAGE_CLASS $PERSISTENCE_STORAGE_CLASS is OCS"
+        log_info "Need to check if workers are looping for /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
+        opNotReady=1
+        iter=0
+        maxIter=240
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster' 2>&1 >/dev/null
+            if [[ $? -eq 0 ]]; then
+                log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster"
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c 'touch /mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster'"
+                break
+            else
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep '/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists' 2>&1 >/dev/null
+                if [[ $? -eq 0 ]]; then
+                    log_info "/mnt/blumeta0/home/db2inst1/hosts/.joined_to_cluster exists"
+                    break
+                else
+                    log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
+                    let iter=iter+1
+                    sleep 30
+                fi
+            fi
+        done
+
+        log_info "Need to check if workers are looping for /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+        opNotReady=1
+        iter=0
+        maxIter=240
+        while [ $opNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+            oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'Not all workers have the same' 2>&1 >/dev/null
+            if [[ $? -eq 0 ]]; then
+                log_info "DV is looping at checking /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+                current_cid=$(oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- bash -c "cat /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID")
+                log_info "Current CID: $current_cid"
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} exec -it c-db2u-dv-db2u-0 -- su - db2inst1 -c "/usr/ibmpacks/current/bigsql/bigsql/bigsql-cli/BIGSQL/package/scripts/bigsqlPexec.sh -w -c \"echo $current_cid > /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID\""
+                break
+            else
+                oc --namespace ${SERVICE_INSTANCE_NAMESPACE} logs c-db2u-dv-db2u-0 | grep 'All workers have the same' 2>&1 >/dev/null
+                if [[ $? -eq 0 ]]; then
+                    log_info "All workers have the same /mnt/blumeta0/home/db2inst1/hosts/.registeredHeadCID"
+                    break
+                else
+                    log_info "Waiting for BigSQL workers to join head c-db2u-dv-db2u-0 .. ($iter / $maxIter)"
+                    let iter=iter+1
+                    sleep 30
+                fi
+            fi
+        done
+    fi
+
 }
 
 echo "done"
