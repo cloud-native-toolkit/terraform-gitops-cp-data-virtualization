@@ -41,24 +41,24 @@ spec:
                 name: admin-user-details
                 key: initial_admin_password
           - name: SERVICE_INSTANCE_NAMESPACE
-            value: {{ .Values.SERVICE_INSTANCE_NAMESPACE }}
+            value: "gitops-cp4d-instance"
           - name: ZEN_OPERATORS_NAMESPACE
-            value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
+            value: "cpd-operators"
           - name: MEMORY_REQUEST_SIZE
-            value: {{ .Values.MEMORY_REQUEST_SIZE }}
+            value: "16Gi"
           - name: CPU_REQUEST_SIZE
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "4"
           - name: PERSISTENCE_STORAGE_CLASS
-            value: {{ .Values.PERSISTENCE_STORAGE_CLASS }}
+            value: "portworx-db2-rwx-sc"
           - name: PERSISTENCE_STORAGE_SIZE
-            value: {{ .Values.PERSISTENCE_STORAGE_SIZE }}
+            value: "50Gi"
           - name: CACHING_STORAGE_CLASS
-            value: {{ .Values.CACHING_STORAGE_CLASS }}
+            value: "portworx-db2-rwx-sc"
           - name: CACHING_STORAGE_SIZE
-            value: {{ .Values.CACHING_STORAGE_SIZE }}
+            value: "50Gi"
           - name: WORKER_STORAGE_CLASS
-            value: {{ .Values.WORKER_STORAGE_CLASS }}
+            value: "portworx-db2-rwx-sc"
           - name: WORKER_STORAGE_SIZE
-            value: {{ .Values.WORKER_STORAGE_SIZE }}
+            value: "50Gi"
           - name: NUMBER_OF_WORKERS
-            value: {{ .Values.NUMBER_OF_WORKERS }}
+            value: "1"
