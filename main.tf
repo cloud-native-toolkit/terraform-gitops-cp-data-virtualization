@@ -30,6 +30,77 @@ module setup_clis {
   source = "github.com/cloud-native-toolkit/terraform-util-clis.git"
 }
 
+module setup_service_account {
+  source = "https://github.com/cloud-native-toolkit/terraform-gitops-service-account.git"
+
+  gitops_config = var.gitops_config
+  git_credentials = var.git_credentials
+  namespace = var.cpd_namespace
+  name = var.service_account_name
+  server_name = var.server_name
+  rbac_cluster_scope = true
+  rbac_rules = [{
+    apiGroups = ["apps"]
+    resources = ["statefulsets"]
+    verbs = ["get", "watch", "list", "patch"]
+  },
+  {
+    apiGroups = [""]
+    resources = ["pods"]
+    verbs = ["get", "watch", "list"]
+  },
+  {
+    apiGroups = [""]
+    resources = ["pods/log"]
+    verbs = ["get", "watch", "list"]
+  },
+  {
+    apiGroups = ["cpd.ibm.com"]
+    resources = ["ibmcpds"]
+    verbs = ["get", "watch", "list"]
+  },
+  {
+    apiGroups = ["operator.ibm.com"]
+    resources = ["namespacescopes"]
+    verbs = ["get", "watch", "list"]
+  },
+  {
+    apiGroups = ["db2u.databases.ibm.com"]
+    resources = ["dvservices"]
+    verbs = ["get", "watch", "list"]
+  },
+  {
+    apiGroups = ["apiextensions.k8s.io"]
+    resources = ["customresourcedefinitions"]
+    verbs = ["get", "watch", "list"]
+  },
+  {
+    apiGroups = ["rbac.authorization.k8s.io"]
+    resources = ["roles"]
+    verbs = ["get", "watch", "list", "create", "patch"]
+  },
+  {
+    apiGroups = ["rbac.authorization.k8s.io"]
+    resources = ["rolebindings"]
+    verbs = ["get", "watch", "list", "create", "patch"]
+  },
+  {
+    apiGroups = ["db2u.databases.ibm.com"]
+    resources = ["dvs"]
+    verbs = ["get", "watch", "list", "create", "patch", "delete", "update"]
+  },
+  {
+    apiGroups = ["db2u.databases.ibm.com"]
+    resources = ["bigsqls"]
+    verbs = ["get", "watch", "list", "create", "patch", "delete", "update"]
+  },
+  {
+    apiGroups = ["db2u.databases.ibm.com"]
+    resources = ["db2uclusters"]
+    verbs = ["get", "watch", "list", "create", "patch", "delete", "update"]
+  }]
+}
+
 resource null_resource create_prerequisites_yaml {
   provisioner "local-exec" {
     command = "${path.module}/scripts/create-yaml.sh '${local.prerequisites_name}' '${local.prerequisites_yaml_dir}'"
