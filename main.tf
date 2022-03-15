@@ -109,7 +109,7 @@ module setup_rbac {
   cluster_scope             = true
 }
 
-resource null_resource create_prerequisites_yaml {
+/*resource null_resource create_prerequisites_yaml {
   provisioner "local-exec" {
     command = "${path.module}/scripts/create-yaml.sh '${local.prerequisites_name}' '${local.prerequisites_yaml_dir}'"
 
@@ -152,7 +152,7 @@ resource null_resource setup_prerequisites_gitops {
       GITOPS_CONFIG   = self.triggers.gitops_config
     }
   }
-}
+}*/
 
 resource null_resource create_yaml {
   provisioner "local-exec" {
