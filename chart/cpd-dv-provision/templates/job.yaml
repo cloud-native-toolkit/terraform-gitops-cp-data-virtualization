@@ -46,8 +46,6 @@ spec:
             value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
           - name: MEMORY_REQUEST_SIZE
             value: {{ .Values.MEMORY_REQUEST_SIZE }}
-          - name: CPU_REQUEST_SIZE
-            value: {{ .Values.CPU_REQUEST_SIZE }}
           - name: PERSISTENCE_STORAGE_CLASS
             value: {{ .Values.PERSISTENCE_STORAGE_CLASS }}
           - name: PERSISTENCE_STORAGE_SIZE
@@ -62,3 +60,5 @@ spec:
             value: {{ .Values.WORKER_STORAGE_SIZE }}
           - name: NUMBER_OF_WORKERS
             value: {{ .Values.NUMBER_OF_WORKERS }}
+          - name: CPU_SIZE
+            value: {{ .Values.CPU_SIZE }}
