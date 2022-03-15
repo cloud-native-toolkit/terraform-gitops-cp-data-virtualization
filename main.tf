@@ -88,6 +88,16 @@ module setup_rbac {
       apiGroups = ["apiextensions.k8s.io"]
       resources = ["customresourcedefinitions"]
       verbs = ["create", "delete", "get", "list", "patch", "update"]
+    },
+    {
+      apiGroups = ["apps"]
+      resources = ["statefulsets"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
+    },
+    {
+      apiGroups = [""]
+      resources = ["apps"]
+      verbs = ["create", "delete", "get", "list", "patch", "update"]
     }
   ]
   server_name               = var.server_name
