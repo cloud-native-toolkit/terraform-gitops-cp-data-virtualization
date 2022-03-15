@@ -45,20 +45,20 @@ spec:
           - name: ZEN_OPERATORS_NAMESPACE
             value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
           - name: MEMORY_REQUEST_SIZE
-            value: {{ .Values.MEMORY_REQUEST_SIZE }}
+            value: "24Gi"
           - name: CPU_REQUEST_SIZE
             value: "6"
           - name: PERSISTENCE_STORAGE_CLASS
             value: {{ .Values.PERSISTENCE_STORAGE_CLASS }}
           - name: PERSISTENCE_STORAGE_SIZE
-            value: {{ .Values.PERSISTENCE_STORAGE_SIZE }}
+            value: "50Gi"
           - name: CACHING_STORAGE_CLASS
             value: {{ .Values.CACHING_STORAGE_CLASS }}
           - name: CACHING_STORAGE_SIZE
-            value: {{ .Values.CACHING_STORAGE_SIZE }}
+            value: "50Gi"
           - name: WORKER_STORAGE_CLASS
             value: {{ .Values.WORKER_STORAGE_CLASS }}
           - name: WORKER_STORAGE_SIZE
-            value: {{ .Values.WORKER_STORAGE_SIZE }}
+            value: "50Gi"
           - name: NUMBER_OF_WORKERS
             value: "1"
