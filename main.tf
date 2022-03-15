@@ -40,6 +40,25 @@ module setup_service_account {
   server_name = var.server_name  
 }
 
+module setup_rbac {
+  source = "github.com/cloud-native-toolkit/terraform-gitops-rbac.git?ref=v1.7.1"
+
+  gitops_config             = var.gitops_config
+  git_credentials           = var.git_credentials
+  service_account_namespace = var.cpd_namespace
+  service_account_name      = var.service_account_name
+  namespace                 = var.cpd_namespace
+  rules                     = [
+    {
+      apiGroups = ["apiGroups"]
+      resources = ["ibmcpds"]
+      verbs = ["get", "watch", "list"]
+    }
+  ]
+  server_name               = var.server_name
+  cluster_scope             = true
+}
+
 resource null_resource create_prerequisites_yaml {
   provisioner "local-exec" {
     command = "${path.module}/scripts/create-yaml.sh '${local.prerequisites_name}' '${local.prerequisites_yaml_dir}'"
