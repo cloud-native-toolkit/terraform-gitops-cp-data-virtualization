@@ -306,13 +306,6 @@ check_dv_provision() {
 
     echo -e "\e[1;42m DV  PROVISIONING COMPLETED  \e[0m"
 
-    log_info "OpenShift version:"
-    oc version
-    log_info "cloudctl version:"
-    ./${CLOUDCTLEXEC} version
-    log_info "lite version"
-    oc get zenservice lite-cr -n $SERVICE_INSTANCE_NAMESPACE -o yaml | grep ' zenOperatorBuildNumber: '
-
     #v3 api to fetch instances
     log_info "Listing all provisioned cp4d instances"
     create_jwt_token
