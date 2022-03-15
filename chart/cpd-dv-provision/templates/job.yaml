@@ -45,9 +45,9 @@ spec:
           - name: ZEN_OPERATORS_NAMESPACE
             value: {{ .Values.ZEN_OPERATORS_NAMESPACE }}
           - name: MEMORY_REQUEST_SIZE
-            value: {{ .Values.MEMORY_REQUEST_SIZE }}
+            value: "16Gi"
           - name: CPU_REQUEST_SIZE
-            value: {{ .Values.CPU_REQUEST_SIZE }}
+            value: "4"
           - name: PERSISTENCE_STORAGE_CLASS
             value: "portworx-db2-rwx-sc"
           - name: PERSISTENCE_STORAGE_SIZE
