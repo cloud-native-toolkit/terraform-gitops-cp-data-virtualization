@@ -556,6 +556,9 @@ data:
 
     echo "done"
 
+    #################################
+    # Main starts here
+    #################################
     init_parameters
     print_install_parameters
 

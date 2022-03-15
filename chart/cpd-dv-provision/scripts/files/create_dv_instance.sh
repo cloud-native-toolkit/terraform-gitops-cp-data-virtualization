@@ -546,6 +546,9 @@ log_warning() {
 
 echo "done"
 
+#################################
+# Main starts here
+#################################
 init_parameters
 print_install_parameters
 
