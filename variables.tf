@@ -97,3 +97,9 @@ variable "cpu_size" {
   description = "CPU Request Size"
   default     = "6"
 }
+
+variable "service_account_name" {
+  type        = string
+  description = "Service Account Name"
+  default     = "dv-instance-creation-sa"
+}
