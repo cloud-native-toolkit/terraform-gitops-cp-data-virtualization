@@ -51,14 +51,14 @@ spec:
           - name: PERSISTENCE_STORAGE_CLASS
             value: {{ .Values.PERSISTENCE_STORAGE_CLASS }}
           - name: PERSISTENCE_STORAGE_SIZE
-            value: "50Gi"
+            value: {{ .Values.PERSISTENCE_STORAGE_SIZE }}
           - name: CACHING_STORAGE_CLASS
-            value: "portworx-db2-rwx-sc"
+            value: {{ .Values.CACHING_STORAGE_CLASS }}
           - name: CACHING_STORAGE_SIZE
-            value: "50Gi"
+            value: {{ .Values.CACHING_STORAGE_SIZE }}
           - name: WORKER_STORAGE_CLASS
-            value: "portworx-db2-rwx-sc"
+            value: {{ .Values.WORKER_STORAGE_CLASS }}
           - name: WORKER_STORAGE_SIZE
-            value: "50Gi"
+            value: {{ .Values.WORKER_STORAGE_SIZE }}
           - name: NUMBER_OF_WORKERS
             value: "1"
