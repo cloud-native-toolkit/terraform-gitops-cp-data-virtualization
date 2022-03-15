@@ -355,6 +355,36 @@ provision_dv() {
     fi
 
     log_info "Provision DV instance version ${dv_instance_version}"
+
+    #check DV and db2u crds
+    oc get crd | grep -i bigsqls.db2u.databases.ibm.com
+    if [[ $? -ne 0 ]]; then
+        log_error "DV/db2u CRD bigsqls.db2u.databases.ibm.com missing"
+        exit 1
+    fi
+
+    oc get crd | grep -i db2uclusters.db2u.databases.ibm.com
+    if [[ $? -ne 0 ]]; then
+        log_error "DV/db2u CRD db2ucluster.db2u.databases.ibm.com missing"
+        exit 1
+    fi
+
+    log_info "Wait for stabilization"
+    sleep 120s
+
+    local current_timestamp=$(get_timestamp $VALUE_INT_NO) #print a "ugly" timestamp like "2021040319h45m09s"
+    log_info "Current Timestamp: $current_timestamp"
+
+    #create the jwt token:https://cloud.ibm.com/apidocs/cloud-pak-data
+    create_jwt_token
+    log_info "The jwt token is ${token}"
+    sleep 10s
+
+    if [ "${token}" == "" ]; then
+        log_fatal "JWT token is not generated "
+        log_fatal ""
+        exit 1
+    fi
 }
 
 echo "done"
