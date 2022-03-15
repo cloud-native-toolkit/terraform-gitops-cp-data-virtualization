@@ -61,4 +61,4 @@ spec:
           - name: NUMBER_OF_WORKERS
             value: {{ .Values.NUMBER_OF_WORKERS }}
           - name: CPU_SIZE
-            value: {{ .Values.CPU_SIZE }}
+            value: "6"
