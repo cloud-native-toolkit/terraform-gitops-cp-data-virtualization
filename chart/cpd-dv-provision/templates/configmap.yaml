@@ -448,14 +448,6 @@ data:
         log_info "Update DV worker storage size"
         sed -i "s/\"persistence.workerpv.size\": \"100Gi\"/\"persistence.workerpv.size\": \"${WORKER_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
 
-        #We do not need to add one more pod because it's handled in dv-cr.yaml CR template
-        #i.e size: {{ add .parameters.workerCount 1 }}
-        log_info "Update DV Number of Workers"
-        sed -i "s|\"workerCount\": \"1\"|\"workerCount\": \"${NUMBER_OF_WORKERS}\"|g" "${CMDDIR}/${current_json}"
-
-        #Provision
-        log_info "Provision DV instance"
-        cat "${CMDDIR}/${current_json}"
     }
 
     echo "done"
