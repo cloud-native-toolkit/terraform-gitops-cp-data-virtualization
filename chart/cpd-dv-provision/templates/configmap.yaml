@@ -439,6 +439,23 @@ data:
         log_info "Update DV caching storage class"
         sed -i "s/\"persistence.cachingpv.storageClass\": \"nfs-client\"/\"persistence.cachingpv.storageClass\": \"${CACHING_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
 
+        log_info "Update DV caching storage size"
+        sed -i "s/\"persistence.cachingpv.size\": \"100Gi\"/\"persistence.cachingpv.size\": \"${CACHING_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV worker storage class"
+        sed -i "s/\"persistence.workerpv.storageClass\": \"nfs-client\"/\"persistence.workerpv.storageClass\": \"${WORKER_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+
+        log_info "Update DV worker storage size"
+        sed -i "s/\"persistence.workerpv.size\": \"100Gi\"/\"persistence.workerpv.size\": \"${WORKER_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
+
+        #We do not need to add one more pod because it's handled in dv-cr.yaml CR template
+        #i.e size: {{ add .parameters.workerCount 1 }}
+        log_info "Update DV Number of Workers"
+        sed -i "s|\"workerCount\": \"1\"|\"workerCount\": \"${NUMBER_OF_WORKERS}\"|g" "${CMDDIR}/${current_json}"
+
+        #Provision
+        log_info "Provision DV instance"
+        cat "${CMDDIR}/${current_json}"
     }
 
     echo "done"
