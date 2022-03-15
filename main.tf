@@ -50,9 +50,19 @@ module setup_rbac {
   namespace                 = var.cpd_namespace
   rules                     = [
     {
-      apiGroups = ["apiGroups"]
+      apiGroups = ["cpd.ibm.com"]
       resources = ["ibmcpds"]
       verbs = ["get", "watch", "list"]
+    },
+    {
+      apiGroups = ["rbac.authorization.k8s.io"]
+      resources = ["roles"]
+      verbs = ["get", "watch", "list", "create", "patch"]
+    },
+    {
+      apiGroups = ["rbac.authorization.k8s.io"]
+      resources = ["rolebindings"]
+      verbs = ["get", "watch", "list", "create", "patch"]
     }
   ]
   server_name               = var.server_name

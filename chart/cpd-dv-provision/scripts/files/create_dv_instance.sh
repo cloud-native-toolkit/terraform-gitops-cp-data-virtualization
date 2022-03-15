@@ -549,7 +549,7 @@ echo "done"
 #################################
 # Main starts here
 #################################
-sleep 300
+sleep 180
 init_parameters
 print_install_parameters
 
