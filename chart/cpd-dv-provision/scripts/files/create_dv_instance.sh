@@ -339,4 +339,22 @@ trim_spaces() {
     echo $result
 }
 
+#Provision DV via Zen core REST API
+provision_dv() {
+    local dv_instance_version=$(get_dv_version) #default to 1.7.1, once we switch to CP4D River 4.0.2, default will move up to 1.7.2
+    local dv_service_version=$(get_dv_service_version)
+
+    if [ -z "${dv_service_version}" ]; then
+        log_warning "Unable to get DV service version. Use default DV instance version instead ${dv_instance_version}"
+    else
+        if [ "${dv_service_version}" != "${dv_instance_version}" ]; then
+            log_warning "DV service version ${dv_service_version} is different from expected DV instance version ${dv_instance_version}"
+            log_warning "Provision DV instance version using DV service version ${dv_service_version} instead"
+            dv_instance_version=${dv_service_version}
+        fi
+    fi
+
+    log_info "Provision DV instance version ${dv_instance_version}"
+}
+
 echo "done"
