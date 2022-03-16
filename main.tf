@@ -46,7 +46,7 @@ module setup_rbac {
   gitops_config             = var.gitops_config
   git_credentials           = var.git_credentials
   service_account_namespace = var.cpd_namespace
-  service_account_name      = var.service_account_name
+  service_account_name      = "dv-instance-creation-sa"
   namespace                 = var.cpd_namespace
   rules                     = [
     {
