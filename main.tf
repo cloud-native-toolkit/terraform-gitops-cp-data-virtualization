@@ -8,14 +8,14 @@ locals {
   values_content = {
     SERVICE_INSTANCE_NAMESPACE = var.cpd_namespace
     ZEN_OPERATORS_NAMESPACE = var.operator_namespace
-    MEMORY_REQUEST_SIZE = "24Gi"
+    MEMORY_REQUEST_SIZE = var.memory_request_size
     CPU_REQUEST_SIZE= "6"
-    PERSISTENCE_STORAGE_CLASS = "portworx-db2-rwx-sc"
-    PERSISTENCE_STORAGE_SIZE = "50Gi"
-    CACHING_STORAGE_CLASS = "portworx-db2-rwx-sc"
-    CACHING_STORAGE_SIZE = "50Gi"
-    WORKER_STORAGE_CLASS = "portworx-db2-rwx-sc"
-    WORKER_STORAGE_SIZE = "50Gi"
+    PERSISTENCE_STORAGE_CLASS = var.storage_class
+    PERSISTENCE_STORAGE_SIZE = var.persistence_storage_size
+    CACHING_STORAGE_CLASS = var.storage_class
+    CACHING_STORAGE_SIZE = var.caching_storage_size
+    WORKER_STORAGE_CLASS = var.storage_class
+    WORKER_STORAGE_SIZE = var.worker_storage_size
     NUMBER_OF_WORKERS = "1"
   }
   layer = "services"
@@ -36,7 +36,7 @@ module setup_service_account {
   gitops_config = var.gitops_config
   git_credentials = var.git_credentials
   namespace = var.cpd_namespace
-  name = var.service_account_name
+  name = "dv-instance-creation-sa"
   server_name = var.server_name  
 }
 

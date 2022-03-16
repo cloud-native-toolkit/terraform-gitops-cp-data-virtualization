@@ -88,3 +88,33 @@ variable "cpu_size" {
   description = "CPU Request Size"
   default     = "6"
 }
+
+variable "memory_request_size" {
+  type        = string
+  description = "Memory Request Size"
+  default     = "16Gi"
+}
+
+variable "storage_class" {
+  type        = string
+  description = "Storage Class for data persistence"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "persistence_storage_size" {
+  type        = string
+  description = "Storage Size for data persistence"
+  default     = "50Gi"
+}
+
+variable "caching_storage_size" {
+  type        = string
+  description = "Storage Size for Caching data"
+  default     = "50Gi"
+}
+
+variable "worker_storage_size" {
+  type        = string
+  description = "Storage Size for workers data persistence"
+  default     = "50Gi"
+}
