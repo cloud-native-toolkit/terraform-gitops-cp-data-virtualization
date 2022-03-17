@@ -47,7 +47,7 @@ spec:
           - name: MEMORY_REQUEST_SIZE
             value: {{ .Values.MEMORY_REQUEST_SIZE }}
           - name: CPU_REQUEST_SIZE
-            value: "6"
+            value: 6
           - name: PERSISTENCE_STORAGE_CLASS
             value: {{ .Values.PERSISTENCE_STORAGE_CLASS }}
           - name: PERSISTENCE_STORAGE_SIZE
