@@ -44,9 +44,11 @@ jobs:
           repo=$(echo ${GITHUB_REPOSITORY} | sed -E "s~.*/[^-]+-(.*)~\1~g")
           echo "Repo: $repo"
           echo "::set-output name=repo::$repo"
+          
           org="${GIT_ORG:-cloud-native-toolkit-test}"
           echo "Org: $org"
           echo "::set-output name=org::$org"
+
           if [[ $ENVIRONMENT =~ ^aws ]]; then
             echo "::set-output name=CLUSTER_USERNAME::$AWS_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$AWS_CLUSTER_PASSWORD"
@@ -54,6 +56,7 @@ jobs:
             echo "::set-output name=CLUSTER_USERNAME::$IBM_CLUSTER_USERNAME"
             echo "::set-output name=CLUSTER_PASSWORD::$IBM_CLUSTER_PASSWORD"
           fi
+
       - name: Verify deploy on ${{ matrix.testcase }}
         uses: cloud-native-toolkit/action-module-verify-deploy@main
         with:
