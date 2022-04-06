@@ -1,6 +1,6 @@
 # module "gitops_cp4d_operator" {
 #   depends_on = [
-#     module.gitops_ibm_catalogs
+#     module.gitops_cp_foundation
 #   ]
 #   source = "github.com/cloud-native-toolkit/terraform-gitops-cp4d-operator"
 
