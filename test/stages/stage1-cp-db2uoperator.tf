@@ -1,5 +1,5 @@
 module "db2u" {  
-  source = "./module"
+  source = "github.com/cloud-native-toolkit/terraform-gitops-db2u-operator"
 
   depends_on = [
         module.gitops_namespace
