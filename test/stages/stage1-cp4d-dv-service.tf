@@ -9,7 +9,7 @@ module "cp4d-dv-service" {
     git_credentials = module.gitops.git_credentials
     server_name = module.gitops.server_name
     namespace = module.gitops_namespace.name
-    operator_namespace = module.gitops_cpd_operator_namespace.name
+    operator_namespace = "cpd-operators"
     cpd_namespace = "gitops-cp4d-instance"
     kubeseal_cert = module.gitops.sealed_secrets_cert
 }
