@@ -5,6 +5,7 @@ GIT_TOKEN=$(cat git_token)
 
 export KUBECONFIG=$(cat .kubeconfig)
 NAMESPACE=$(jq -r '.cpd_namespace // "gitops-cp4d-instance"' gitops-output.json)
+CPD_NAMESPACE=$(jq -r '.cpd_namespace // "cpd_namespace"' gitops-output.json)
 COMPONENT_NAME=$(jq -r '.name // "my-module"' gitops-output.json)
 BRANCH=$(jq -r '.branch // "main"' gitops-output.json)
 SERVER_NAME=$(jq -r '.server_name // "default"' gitops-output.json)
@@ -49,6 +50,37 @@ else
   echo "Found namespace: ${NAMESPACE}. Sleeping for 30 seconds to wait for everything to settle down"
   sleep 30
 fi
+
+while [ true ]; do
+  status=$(oc -n ${CPD_NAMESPACE} get dvservice --no-headers | awk '{print $2}')
+  echo "DV Service status is "${status}""
+  if [ $status == "True" ]; then
+    echo "DV Service status is True"
+    sleep 60
+    break
+  fi
+done
+
+log_info "DV Readiness Check"
+
+dvenginePod=$(oc get pod -n $CPD_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
+log_info "DV engine head pod is $dvenginePod"
+
+#Wait until the DV service is  ready
+dvNotReady=1
+iter=0
+maxIter=120 #DV takes longer than BigSQL to become ready
+while [ $dvNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+    oc logs -n $CPD_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" >/dev/null
+    dvNotReady=$?
+    if [ $dvNotReady -eq 0 ]; then
+        break
+    else
+        log_info "Waiting for the DV service to be ready. Recheck in 30 seconds"
+        let iter=iter+1
+        sleep 30
+    fi
+done
 
 cd ..
 rm -rf .testrepo
