@@ -70,14 +70,18 @@ echo "DV engine head pod is $dvenginePod"
 dvNotReady=1
 iter=0
 maxIter=120 #DV takes longer than BigSQL to become ready
-while [ $dvNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
+while [ true ]; do
     oc logs -n $CPD_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" >/dev/null
+    echo "dvNotReady "$dvNotReady""
     dvNotReady=$?
     if [ $dvNotReady -eq 0 ]; then
         break
     else
         echo "Waiting for the DV service to be ready. Recheck in 30 seconds"
         let iter=iter+1
+        if [ $iter == $maxIter ]; then
+          exit 1
+        fi
         sleep 30
     fi
 done
