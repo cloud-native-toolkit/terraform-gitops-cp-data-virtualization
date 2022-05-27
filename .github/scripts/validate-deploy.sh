@@ -61,10 +61,10 @@ while [ true ]; do
   fi
 done
 
-log_info "DV Readiness Check"
+echo "DV Readiness Check"
 
 dvenginePod=$(oc get pod -n $CPD_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
-log_info "DV engine head pod is $dvenginePod"
+echo "DV engine head pod is $dvenginePod"
 
 #Wait until the DV service is  ready
 dvNotReady=1
@@ -76,7 +76,7 @@ while [ $dvNotReady -eq 1 ] && [ $iter -le $maxIter ]; do
     if [ $dvNotReady -eq 0 ]; then
         break
     else
-        log_info "Waiting for the DV service to be ready. Recheck in 30 seconds"
+        echo "Waiting for the DV service to be ready. Recheck in 30 seconds"
         let iter=iter+1
         sleep 30
     fi
