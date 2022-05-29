@@ -79,3 +79,52 @@ variable "server_name" {
   description = "The name of the server"
   default     = "default"
 }
+
+variable "cpd_namespace" {
+  type        = string
+  description = "CPD namespace"
+  default = "gitops-cp4d-instance"
+}
+
+variable "operator_namespace" {
+  type        = string
+  description = "operator namespace"
+  default     = "cpd-operators"
+}
+
+variable "cpu_size" {
+  type        = string
+  description = "CPU Request Size"
+  default     = "6"
+}
+
+variable "memory_request_size" {
+  type        = string
+  description = "Memory Request Size"
+  default     = "16Gi"
+}
+
+variable "storage_class" {
+  type        = string
+  description = "Storage Class for data persistence"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "persistence_storage_size" {
+  type        = string
+  description = "Storage Size for data persistence"
+  default     = "50Gi"
+}
+
+variable "caching_storage_size" {
+  type        = string
+  description = "Storage Size for Caching data"
+  default     = "50Gi"
+}
+
+variable "worker_storage_size" {
+  type        = string
+  description = "Storage Size for workers data persistence"
+  default     = "50Gi"
+}
+

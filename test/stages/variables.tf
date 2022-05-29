@@ -1,13 +1,11 @@
-
-# Resource Group Variables
-variable "resource_group_name" {
+variable cluster_username { 
   type        = string
-  description = "Existing resource group where the IKS cluster will be provisioned."
+  description = "The username for OCP cluster access"
 }
 
-variable "ibmcloud_api_key" {
+variable "cluster_password" {
   type        = string
-  description = "The api key for IBM Cloud access"
+  description = "The password for OCP cluster access"
 }
 
 variable "server_url" {
@@ -39,18 +37,6 @@ variable "cluster_exists" {
   type        = string
   description = "Flag indicating if the cluster already exists (true or false)"
   default     = "true"
-}
-
-variable "name_prefix" {
-  type        = string
-  description = "Prefix name that should be used for the cluster and services. If not provided then resource_group_name will be used"
-  default     = ""
-}
-
-variable "vpc_cluster" {
-  type        = bool
-  description = "Flag indicating that this is a vpc cluster"
-  default     = false
 }
 
 variable "git_token" {
@@ -87,4 +73,48 @@ variable "kubeseal_namespace" {
 }
 
 variable "cp_entitlement_key" {
+  type        = string
+  description = "The entitlement key required to access Cloud Pak images"
+}
+
+variable "cpd_namespace" {
+  type        = string
+  description = "CPD namespace"
+  default = "gitops-cp4d-instance"
+}
+
+variable "cpu_size" {
+  type        = string
+  description = "CPU Request Size"
+  default     = "6"
+}
+
+variable "memory_request_size" {
+  type        = string
+  description = "Memory Request Size"
+  default     = "16Gi"
+}
+
+variable "storage_class" {
+  type        = string
+  description = "Storage Class for data persistence"
+  default     = "portworx-db2-rwx-sc"
+}
+
+variable "persistence_storage_size" {
+  type        = string
+  description = "Storage Size for data persistence"
+  default     = "50Gi"
+}
+
+variable "caching_storage_size" {
+  type        = string
+  description = "Storage Size for Caching data"
+  default     = "50Gi"
+}
+
+variable "worker_storage_size" {
+  type        = string
+  description = "Storage Size for workers data persistence"
+  default     = "50Gi"
 }

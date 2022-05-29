@@ -5,13 +5,14 @@ resource null_resource write_outputs {
 
     environment = {
       OUTPUT = jsonencode({
-        name        = module.gitops_module.name
-        branch      = module.gitops_module.branch
-        namespace   = module.gitops_module.namespace
-        server_name = module.gitops_module.server_name
-        layer       = module.gitops_module.layer
-        layer_dir   = module.gitops_module.layer == "infrastructure" ? "1-infrastructure" : (module.gitops_module.layer == "services" ? "2-services" : "3-applications")
-        type        = module.gitops_module.type
+        name        = module.cpd-dv-provision.name
+        cpd_namespace = module.cpd-dv-provision.cpd_namespace
+        branch      = module.cpd-dv-provision.branch
+        namespace   = module.cpd-dv-provision.namespace
+        server_name = module.cpd-dv-provision.server_name
+        layer       = module.cpd-dv-provision.layer
+        layer_dir   = module.cpd-dv-provision.layer == "infrastructure" ? "1-infrastructure" : (module.cpd-dv-provision.layer == "services" ? "2-services" : "3-applications")
+        type        = module.cpd-dv-provision.type
       })
     }
   }

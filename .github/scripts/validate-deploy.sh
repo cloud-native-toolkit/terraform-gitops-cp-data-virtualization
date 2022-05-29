@@ -4,7 +4,8 @@ GIT_REPO=$(cat git_repo)
 GIT_TOKEN=$(cat git_token)
 
 export KUBECONFIG=$(cat .kubeconfig)
-NAMESPACE=$(cat .namespace)
+NAMESPACE=$(jq -r '.cpd_namespace // "gitops-cp4d-instance"' gitops-output.json)
+CPD_NAMESPACE=$(jq -r '.cpd_namespace // "cpd_namespace"' gitops-output.json)
 COMPONENT_NAME=$(jq -r '.name // "my-module"' gitops-output.json)
 BRANCH=$(jq -r '.branch // "main"' gitops-output.json)
 SERVER_NAME=$(jq -r '.server_name // "default"' gitops-output.json)
@@ -50,21 +51,40 @@ else
   sleep 30
 fi
 
-DEPLOYMENT="${COMPONENT_NAME}-${BRANCH}"
-count=0
-until kubectl get deployment "${DEPLOYMENT}" -n "${NAMESPACE}" || [[ $count -eq 20 ]]; do
-  echo "Waiting for deployment/${DEPLOYMENT} in ${NAMESPACE}"
-  count=$((count + 1))
-  sleep 15
+while [ true ]; do
+  status=$(oc -n ${CPD_NAMESPACE} get dvservice --no-headers | awk '{print $2}')
+  echo "DV Service status is "${status}""
+  if [ $status == "True" ]; then
+    echo "DV Service status is True"
+    sleep 60
+    break
+  fi
 done
 
-if [[ $count -eq 20 ]]; then
-  echo "Timed out waiting for deployment/${DEPLOYMENT} in ${NAMESPACE}"
-  kubectl get all -n "${NAMESPACE}"
-  exit 1
-fi
+echo "DV Readiness Check"
 
-kubectl rollout status "deployment/${DEPLOYMENT}" -n "${NAMESPACE}" || exit 1
+dvenginePod=$(oc get pod -n $CPD_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
+echo "DV engine head pod is $dvenginePod"
+
+#Wait until the DV service is  ready
+dvNotReady=1
+iter=0
+maxIter=120 #DV takes longer than BigSQL to become ready
+while [ true ]; do
+    oc logs -n $CPD_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" >/dev/null
+    echo "dvNotReady "$dvNotReady""
+    dvNotReady=$?
+    if [ $dvNotReady -eq 0 ]; then
+        break
+    else
+        echo "Waiting for the DV service to be ready. Recheck in 30 seconds"
+        let iter=iter+1
+        if [ $iter == $maxIter ]; then
+          exit 1
+        fi
+        sleep 30
+    fi
+done
 
 cd ..
 rm -rf .testrepo
