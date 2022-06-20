@@ -138,9 +138,9 @@ get_dv_service_version() {
         status=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice --no-headers | awk '{print $2}')
         echo "DV Service status is "${status}""
         if [ $status == "True" ]; then
-		    echo "DV Service status is True"
+            echo "DV Service status is True"
             break
-		fi
+        fi
     done
     local dv_service_version=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service -o jsonpath="{.spec.version}")
     echo $dv_service_version
