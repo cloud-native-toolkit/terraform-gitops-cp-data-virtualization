@@ -17,9 +17,9 @@
 VALUE_INT_YES=0
 VALUE_INT_NO=1
 
-CPD_RELEASE_CURRENT="4.0.6"
+CPD_RELEASE_CURRENT="4.0.9"
 CPD_RELEASE="${CPD_RELEASE_CURRENT}"
-DV_RELEASE="${CPD_RELEASE}"
+DV_RELEASE="1.7.8"
 DV_CUSTOM_RELEASE=""
 
 isIAMEnabled="false"
@@ -58,8 +58,8 @@ init_parameters() {
     if [ "$DV_CUSTOM_RELEASE" != "" ]; then
         DV_RELEASE=${DV_CUSTOM_RELEASE}
     else
-        if [ "${CPD_RELEASE}" = "4.0.4" ]; then
-            DV_RELEASE="4.0.3"
+        if [ "${CPD_RELEASE}" = "4.0.9" ]; then
+            DV_RELEASE="1.7.8"
         else
             DV_RELEASE=${CPD_RELEASE}
         fi
@@ -116,31 +116,22 @@ exists() {
 
 get_dv_version() {
     cpd_release=${DV_RELEASE}
-    if [[ "$cpd_release" == "4.0.0" ]]; then
-        echo '1.7.0'
-    elif [[ "$cpd_release" == "4.0.1" ]]; then
-        echo '1.7.1'
-    elif [[ "$cpd_release" == "4.0.2" ]]; then
-        echo '1.7.2'
-    elif [[ "$cpd_release" == "4.0.3" ]]; then
-        echo '1.7.3'
-    elif [[ "$cpd_release" == "4.0.4" ]]; then
-        echo '1.7.3'
-    elif [[ "$cpd_release" == "4.0.5" ]]; then
-        echo '1.7.5'
+    if [[ "$cpd_release" == "4.0.9" ]]; then
+        echo '1.7.8'
     else
-        echo '1.7.3'
+        echo '1.7.8'
     fi
 }
 
 get_dv_service_version() {
     while [ true ]; do
-        status=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice --no-headers | awk '{print $2}')
+        status=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service -o jsonpath="{.status.reconcileStatus}")
         echo "DV Service status is "${status}""
-        if [ $status == "True" ]; then
-		    echo "DV Service status is True"
+        sleep 60
+        if [[ $status == *"Completed"* ]]; then
+            echo "DV Service status is "${status}""
             break
-		fi
+        fi
     done
     local dv_service_version=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service -o jsonpath="{.spec.version}")
     echo $dv_service_version

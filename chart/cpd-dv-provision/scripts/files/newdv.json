@@ -1,8 +1,8 @@
 {
     "addon_type": "dv",
     "display_name": "data-virtualization",
-    "namespace": "gitops-cp4d-instance",
-    "addon_version": "1.7.5",
+    "namespace": "cp4d",
+    "addon_version": "1.7.8",
     "create_arguments": {
       "parameters": {
         "enableHostIPC": "false",
