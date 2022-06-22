@@ -17,9 +17,9 @@
 VALUE_INT_YES=0
 VALUE_INT_NO=1
 
-CPD_RELEASE_CURRENT="4.0.6"
+CPD_RELEASE_CURRENT="4.0.9"
 CPD_RELEASE="${CPD_RELEASE_CURRENT}"
-DV_RELEASE="${CPD_RELEASE}"
+DV_RELEASE="1.7.8"
 DV_CUSTOM_RELEASE=""
 
 isIAMEnabled="false"
@@ -129,7 +129,7 @@ get_dv_version() {
     elif [[ "$cpd_release" == "4.0.5" ]]; then
         echo '1.7.5'
     else
-        echo '1.7.3'
+        echo '1.7.8'
     fi
 }
 
