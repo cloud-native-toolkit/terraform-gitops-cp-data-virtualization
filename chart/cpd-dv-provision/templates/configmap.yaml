@@ -611,7 +611,7 @@ data:
     {
         "addon_type": "dv",
         "display_name": "data-virtualization",
-        "namespace": "gitops-cp4d-instance",
+        "namespace": "cp4d",
         "addon_version": "1.7.5",
         "create_arguments": {
           "parameters": {

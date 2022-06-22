@@ -6,5 +6,5 @@ module "cpd-dv-provision" {
   server_name = module.gitops.server_name
   namespace = module.gitops_namespace.name
   kubeseal_cert = module.gitops.sealed_secrets_cert
-  cpd_namespace = "gitops-cp4d-instance"
+  cpd_namespace = "cp4d"
 }

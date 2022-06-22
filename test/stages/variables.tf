@@ -80,7 +80,7 @@ variable "cp_entitlement_key" {
 variable "cpd_namespace" {
   type        = string
   description = "CPD namespace"
-  default = "gitops-cp4d-instance"
+  default = "cp4d"
 }
 
 variable "cpu_size" {
