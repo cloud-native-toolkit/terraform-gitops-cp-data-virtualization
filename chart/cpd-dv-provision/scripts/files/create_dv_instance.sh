@@ -58,8 +58,8 @@ init_parameters() {
     if [ "$DV_CUSTOM_RELEASE" != "" ]; then
         DV_RELEASE=${DV_CUSTOM_RELEASE}
     else
-        if [ "${CPD_RELEASE}" = "4.0.4" ]; then
-            DV_RELEASE="4.0.3"
+        if [ "${CPD_RELEASE}" = "4.0.9" ]; then
+            DV_RELEASE="1.7.8"
         else
             DV_RELEASE=${CPD_RELEASE}
         fi
@@ -116,18 +116,8 @@ exists() {
 
 get_dv_version() {
     cpd_release=${DV_RELEASE}
-    if [[ "$cpd_release" == "4.0.0" ]]; then
-        echo '1.7.0'
-    elif [[ "$cpd_release" == "4.0.1" ]]; then
-        echo '1.7.1'
-    elif [[ "$cpd_release" == "4.0.2" ]]; then
-        echo '1.7.2'
-    elif [[ "$cpd_release" == "4.0.3" ]]; then
-        echo '1.7.3'
-    elif [[ "$cpd_release" == "4.0.4" ]]; then
-        echo '1.7.3'
-    elif [[ "$cpd_release" == "4.0.5" ]]; then
-        echo '1.7.5'
+    if [[ "$cpd_release" == "4.0.9" ]]; then
+        echo '1.7.8'
     else
         echo '1.7.8'
     fi
