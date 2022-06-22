@@ -55,7 +55,7 @@ while [ true ]; do
   status=$(oc -n ${CPD_NAMESPACE} get dvservice dv-service -o jsonpath="{.status.reconcileStatus}")
   sleep 60
   echo "DV Service status is "${status}""
-  if [ $status == *"Completed"* ]; then
+  if [[ $status == *"Completed"* ]]; then
     echo "DV Service status is "${status}""
     break
   fi

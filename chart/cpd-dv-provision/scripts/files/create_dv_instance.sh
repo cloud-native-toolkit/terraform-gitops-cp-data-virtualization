@@ -138,7 +138,7 @@ get_dv_service_version() {
         status=$(oc -n ${SERVICE_INSTANCE_NAMESPACE} get dvservice dv-service -o jsonpath="{.status.reconcileStatus}")
         echo "DV Service status is "${status}""
         sleep 60
-        if [ $status == *"Completed"* ]; then
+        if [[ $status == *"Completed"* ]]; then
             echo "DV Service status is "${status}""
             break
         fi
