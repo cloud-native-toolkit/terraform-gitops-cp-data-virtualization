@@ -61,6 +61,8 @@ while [ true ]; do
   fi
 done
 
+sleep 2400
+
 echo "DV Readiness Check"
 
 dvenginePod=$(oc get pod -n $CPD_NAMESPACE --no-headers=true -l component=db2dv,name=dashmpp-head-0,role=db,type=engine | awk '{print $1}')
@@ -78,8 +80,8 @@ iter=0
 maxIter=120 #DV takes longer than BigSQL to become ready
 while [ true ]; do
     oc logs -n $CPD_NAMESPACE $dvenginePod | grep "db2uctl markers get QP_START_PERFORMED" >/dev/null
-    echo "dvNotReady "$dvNotReady""
     dvNotReady=$?
+    echo "dvNotReady "$dvNotReady""
     if [ $dvNotReady -eq 0 ]; then
         break
     else
