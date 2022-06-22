@@ -602,7 +602,7 @@ data:
         "addon_type": "dv",
         "display_name": "data-virtualization",
         "namespace": "cp4d",
-        "addon_version": "1.7.5",
+        "addon_version": "1.7.8",
         "create_arguments": {
           "parameters": {
             "enableHostIPC": "false",
