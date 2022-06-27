@@ -411,19 +411,19 @@ provision_dv() {
     sed -i "s/\"cpu\": \"4\"/\"cpu\": \"${CPU_REQUEST_SIZE}\"/g" "${CMDDIR}/${current_json}"
 
     log_info "Update DV persistence storage class"
-    sed -i "s/\"persistence.storageClass\": \"nfs-client\"/\"persistence.storageClass\": \"${PERSISTENCE_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+    sed -i "s/\"persistence.storageClass\": \"storageClass\"/\"persistence.storageClass\": \"${PERSISTENCE_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
 
     log_info "Update DV persistence storage size"
     sed -i "s/\"persistence.size\": \"100Gi\"/\"persistence.size\": \"${PERSISTENCE_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
 
     log_info "Update DV caching storage class"
-    sed -i "s/\"persistence.cachingpv.storageClass\": \"nfs-client\"/\"persistence.cachingpv.storageClass\": \"${CACHING_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+    sed -i "s/\"persistence.cachingpv.storageClass\": \"storageClass\"/\"persistence.cachingpv.storageClass\": \"${CACHING_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
 
     log_info "Update DV caching storage size"
     sed -i "s/\"persistence.cachingpv.size\": \"100Gi\"/\"persistence.cachingpv.size\": \"${CACHING_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
 
     log_info "Update DV worker storage class"
-    sed -i "s/\"persistence.workerpv.storageClass\": \"nfs-client\"/\"persistence.workerpv.storageClass\": \"${WORKER_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
+    sed -i "s/\"persistence.workerpv.storageClass\": \"storageClass\"/\"persistence.workerpv.storageClass\": \"${WORKER_STORAGE_CLASS}\"/g" "${CMDDIR}/${current_json}"
 
     log_info "Update DV worker storage size"
     sed -i "s/\"persistence.workerpv.size\": \"100Gi\"/\"persistence.workerpv.size\": \"${WORKER_STORAGE_SIZE}\"/g" "${CMDDIR}/${current_json}"
